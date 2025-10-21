@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Square Image Gallery</title>
+  <title>Masonry Image Gallery</title>
   <style>
     * {
       box-sizing: border-box;
@@ -21,7 +21,7 @@
       min-height: 100vh;
     }
 
-    /* Large Header / Banner */
+    /* Header Banner */
     header {
       width: 100%;
       height: 45vh;
@@ -67,10 +67,11 @@
     /* Card Grid */
     .card-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-auto-rows: 200px;
+      gap: 1rem;
       width: 100%;
-      max-width: 1200px;
+      max-width: 1300px;
       padding: 1rem;
     }
 
@@ -78,50 +79,88 @@
       position: relative;
       overflow: hidden;
       border-radius: 16px;
-      aspect-ratio: 1 / 1; /* makes the card perfectly square */
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
       transition: transform 0.25s ease, box-shadow 0.3s;
       background: #1a1a1a;
+      display: block;
     }
 
     .card:hover {
-      transform: scale(1.04);
+      transform: scale(1.03);
       box-shadow: 0 6px 18px rgba(0,0,0,0.6);
     }
 
     .card img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* keeps image proportions */
+      object-fit: cover;
       display: block;
+    }
+
+    /* Variable Sizes */
+    .card.wide {
+      grid-column: span 2;
+    }
+    .card.tall {
+      grid-row: span 2;
+    }
+    .card.large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    /* Keep layout stable when hiding cards */
+    .card.hidden {
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <header>🌅 Image Gallery 🌅</header>
+  <header>🌌 Masonry Image Gallery 🌌</header>
 
   <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search cards..." onkeyup="filterCards()">
+    <input type="text" id="searchInput" placeholder="Search images..." onkeyup="filterCards()">
   </div>
 
   <div class="card-container" id="cardContainer">
-    <div class="card" data-name="Aurora Skies">
-      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Aurora Skies">
+    <!-- A bunch of cards with custom names -->
+    <div class="card large" data-name="Aurora Skies">
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="">
     </div>
     <div class="card" data-name="Golden Forest">
-      <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80" alt="Golden Forest">
+      <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80" alt="">
     </div>
-    <div class="card" data-name="Urban Glow">
-      <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80" alt="Urban Glow">
+    <div class="card wide" data-name="Urban Glow">
+      <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80" alt="">
     </div>
-    <div class="card" data-name="Ocean Horizon">
-      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Ocean Horizon">
+    <div class="card tall" data-name="Ocean Horizon">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="">
     </div>
     <div class="card" data-name="Desert Mirage">
-      <img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80" alt="Desert Mirage">
+      <img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80" alt="">
     </div>
-    <div class="card" data-name="Midnight Stars">
-      <img src="https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=800&q=80" alt="Midnight Stars">
+    <div class="card wide" data-name="Midnight Stars">
+      <img src="https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=800&q=80" alt="">
+    </div>
+    <div class="card tall" data-name="Neon Streets">
+      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="">
+    </div>
+    <div class="card large" data-name="Snowy Peaks">
+      <img src="https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=800&q=80" alt="">
+    </div>
+    <div class="card" data-name="Coral Reef">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="">
+    </div>
+    <div class="card" data-name="Sunset Drive">
+      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="">
+    </div>
+    <div class="card wide" data-name="Night Lights">
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="">
+    </div>
+    <div class="card tall" data-name="Crystal Waters">
+      <img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80" alt="">
     </div>
   </div>
 
@@ -132,7 +171,7 @@
 
       cards.forEach(card => {
         const name = card.getAttribute('data-name').toLowerCase();
-        card.style.display = name.includes(input) ? '' : 'none';
+        card.classList.toggle('hidden', !name.includes(input));
       });
     }
   </script>
