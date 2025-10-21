@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Card Gallery</title>
+  <title>Square Image Gallery</title>
   <style>
     * {
       box-sizing: border-box;
@@ -21,43 +21,47 @@
       min-height: 100vh;
     }
 
-    /* Banner / Header */
+    /* Large Header / Banner */
     header {
       width: 100%;
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      text-align: center;
-      padding: 2rem 1rem;
+      height: 45vh;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      text-align: center;
     }
 
     /* Search Bar */
     .search-container {
       width: 100%;
       max-width: 600px;
-      margin: 1.5rem auto;
+      margin: 2rem auto;
       padding: 0 1rem;
     }
 
     #searchInput {
       width: 100%;
-      padding: 0.8rem 1rem;
-      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      border-radius: 14px;
       border: none;
       outline: none;
-      font-size: 1rem;
-      background: #1e1e1e;
+      font-size: 1.1rem;
+      background: #1c1c1c;
       color: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      transition: 0.2s;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+      transition: 0.3s;
     }
 
     #searchInput:focus {
       background: #2a2a2a;
-      box-shadow: 0 0 12px rgba(147, 51, 234, 0.5);
+      box-shadow: 0 0 15px rgba(147, 51, 234, 0.5);
     }
 
     /* Card Grid */
@@ -71,70 +75,53 @@
     }
 
     .card {
-      background: #1a1a1a;
+      position: relative;
+      overflow: hidden;
       border-radius: 16px;
-      padding: 1.2rem;
+      aspect-ratio: 1 / 1; /* makes the card perfectly square */
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      text-align: center;
-      transition: transform 0.2s ease, background 0.3s;
+      transition: transform 0.25s ease, box-shadow 0.3s;
+      background: #1a1a1a;
     }
 
     .card:hover {
-      transform: translateY(-6px);
-      background: #222;
+      transform: scale(1.04);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
     }
 
     .card img {
       width: 100%;
-      height: 140px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-bottom: 1rem;
-    }
-
-    .card h3 {
-      margin-bottom: 0.5rem;
-      font-size: 1.1rem;
-    }
-
-    .card p {
-      font-size: 0.9rem;
-      color: #aaa;
+      height: 100%;
+      object-fit: cover; /* keeps image proportions */
+      display: block;
     }
   </style>
 </head>
 <body>
-  <header>✨ My Cool Card Gallery ✨</header>
+  <header>🌅 Image Gallery 🌅</header>
 
   <div class="search-container">
     <input type="text" id="searchInput" placeholder="Search cards..." onkeyup="filterCards()">
   </div>
 
   <div class="card-container" id="cardContainer">
-    <div class="card">
-      <img src="https://placekitten.com/300/200" alt="Kitten 1">
-      <h3>Kitten One</h3>
-      <p>Adorable fluffy friend.</p>
+    <div class="card" data-name="Aurora Skies">
+      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Aurora Skies">
     </div>
-    <div class="card">
-      <img src="https://placekitten.com/301/200" alt="Kitten 2">
-      <h3>Kitten Two</h3>
-      <p>Ready for cuddles.</p>
+    <div class="card" data-name="Golden Forest">
+      <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80" alt="Golden Forest">
     </div>
-    <div class="card">
-      <img src="https://placekitten.com/302/200" alt="Kitten 3">
-      <h3>Kitten Three</h3>
-      <p>Master of naps.</p>
+    <div class="card" data-name="Urban Glow">
+      <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=800&q=80" alt="Urban Glow">
     </div>
-    <div class="card">
-      <img src="https://placekitten.com/303/200" alt="Kitten 4">
-      <h3>Kitten Four</h3>
-      <p>Has opinions about everything.</p>
+    <div class="card" data-name="Ocean Horizon">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80" alt="Ocean Horizon">
     </div>
-    <div class="card">
-      <img src="https://placekitten.com/304/200" alt="Kitten 5">
-      <h3>Kitten Five</h3>
-      <p>Loves snacks and sunshine.</p>
+    <div class="card" data-name="Desert Mirage">
+      <img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=80" alt="Desert Mirage">
+    </div>
+    <div class="card" data-name="Midnight Stars">
+      <img src="https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=800&q=80" alt="Midnight Stars">
     </div>
   </div>
 
@@ -144,9 +131,8 @@
       const cards = document.querySelectorAll('.card');
 
       cards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const desc = card.querySelector('p').textContent.toLowerCase();
-        card.style.display = title.includes(input) || desc.includes(input) ? '' : 'none';
+        const name = card.getAttribute('data-name').toLowerCase();
+        card.style.display = name.includes(input) ? '' : 'none';
       });
     }
   </script>
