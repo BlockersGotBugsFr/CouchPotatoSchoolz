@@ -1,33 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Isometric Grid</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Card Gallery</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #0f0f0f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Banner / Header */
+    header {
+      width: 100%;
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
+      text-align: center;
+      padding: 2rem 1rem;
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Search Bar */
+    .search-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: #1e1e1e;
+      color: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      transition: 0.2s;
+    }
+
+    #searchInput:focus {
+      background: #2a2a2a;
+      box-shadow: 0 0 12px rgba(147, 51, 234, 0.5);
+    }
+
+    /* Card Grid */
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1200px;
+      padding: 1rem;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border-radius: 16px;
+      padding: 1.2rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      text-align: center;
+      transition: transform 0.2s ease, background 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      background: #222;
+    }
+
+    .card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+  </style>
 </head>
 <body>
+  <header>✨ My Cool Card Gallery ✨</header>
 
-    <canvas id="isometric-canvas"></canvas>
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search cards..." onkeyup="filterCards()">
+  </div>
 
-    <div class="content-overlay">
-        <header class="main-header">
-            <a href="#" class="logo">My Website</a>
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Features</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="hero-text">
-            <h1>Welcome to the Isometric Grid</h1>
-            <p>Hover over the tiles to see a cool effect.</p>
-        </div>
+  <div class="card-container" id="cardContainer">
+    <div class="card">
+      <img src="https://placekitten.com/300/200" alt="Kitten 1">
+      <h3>Kitten One</h3>
+      <p>Adorable fluffy friend.</p>
     </div>
+    <div class="card">
+      <img src="https://placekitten.com/301/200" alt="Kitten 2">
+      <h3>Kitten Two</h3>
+      <p>Ready for cuddles.</p>
+    </div>
+    <div class="card">
+      <img src="https://placekitten.com/302/200" alt="Kitten 3">
+      <h3>Kitten Three</h3>
+      <p>Master of naps.</p>
+    </div>
+    <div class="card">
+      <img src="https://placekitten.com/303/200" alt="Kitten 4">
+      <h3>Kitten Four</h3>
+      <p>Has opinions about everything.</p>
+    </div>
+    <div class="card">
+      <img src="https://placekitten.com/304/200" alt="Kitten 5">
+      <h3>Kitten Five</h3>
+      <p>Loves snacks and sunshine.</p>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
+  <script>
+    function filterCards() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.card');
 
+      cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const desc = card.querySelector('p').textContent.toLowerCase();
+        card.style.display = title.includes(input) || desc.includes(input) ? '' : 'none';
+      });
+    }
+  </script>
 </body>
 </html>
