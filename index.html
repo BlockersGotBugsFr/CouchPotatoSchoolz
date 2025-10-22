@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Couch Potato Schoolz</title>
+<title>Gallery Showcase</title>
 <style>
   :root {
     --bg:#0e0f12;
     --panel:#151618;
     --accent:#7c5cff;
     --gap:18px;
-    --counter-bg:rgba(124,92,255,0.8);
   }
   * {box-sizing:border-box;margin:0;padding:0;}
   body {
@@ -25,16 +24,31 @@
     padding:80px 20px;
     font-size:3em;
     font-weight:800;
-    letter-spacing:1px;
+  }
+
+  .search-bar {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    margin:30px auto 10px;
+  }
+
+  .search-bar input {
+    width:220px;
+    padding:10px 14px;
+    border-radius:8px;
+    border:none;
+    background:#1c1c1e;
+    color:#fff;
+    font-size:1em;
   }
 
   .search-toggle {
-    display:block;
-    margin:24px auto;
     background:var(--accent);
     color:#fff;
     border:none;
-    padding:12px 22px;
+    padding:10px 20px;
     border-radius:10px;
     font-weight:600;
     cursor:pointer;
@@ -45,28 +59,26 @@
     box-shadow:0 0 20px rgba(124,92,255,0.3);
   }
 
-  .search-container {
-    width:100%;
-    display:flex;
+  .search-options {
+    display:none;
     justify-content:center;
-    overflow:hidden;
-    height:0;
-    transition:height .3s ease;
+    gap:10px;
+    margin-bottom:30px;
   }
-  .search-container.active {height:70px;}
-  .search-container input {
-    width:60%;
-    max-width:500px;
-    margin-top:20px;
-    padding:14px 18px;
-    border:none;
-    border-radius:12px;
-    font-size:1.1em;
-    outline:none;
+  .search-options.active {display:flex;}
+  .search-options button {
     background:#1d1d1f;
+    border:1px solid #333;
     color:#fff;
+    border-radius:8px;
+    padding:10px 14px;
+    cursor:pointer;
+    transition:all .2s ease;
   }
-  .search-container input::placeholder {color:#888;}
+  .search-options button:hover {
+    background:var(--accent);
+    border-color:var(--accent);
+  }
 
   .card-grid {
     display:grid;
@@ -95,7 +107,6 @@
     display:block;
   }
 
-  /* Counter circle on each card */
   .counter {
     position:absolute;
     top:8px;
@@ -103,109 +114,96 @@
     width:28px;
     height:28px;
     border-radius:50%;
-    background:var(--counter-bg);
+    background:rgba(124,92,255,0.8);
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:0.9em;
     font-weight:600;
     color:#fff;
-    pointer-events:none; /* clicks go to image */
-    user-select:none;
+    pointer-events:none;
   }
 
-  @media(max-width:600px){
-    header{font-size:2em;}
-    .search-container input{width:80%;}
-  }
 </style>
 </head>
 <body>
 
-<header>Couch Potato Schoolz</header>
-<button class="search-toggle" id="toggleBtn">Search</button>
+<header>Gallery Showcase</header>
 
-<div class="search-container" id="searchContainer">
-  <input type="text" id="searchInput" placeholder="Search...">
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search by name..." />
+  <button class="search-toggle" id="toggleBtn">Options</button>
+</div>
+
+<div class="search-options" id="searchOptions">
+  <button data-filter="all">All</button>
+  <button data-filter="nature">Nature</button>
+  <button data-filter="space">Space</button>
+  <button data-filter="city">City</button>
 </div>
 
 <div class="card-grid" id="cardGrid">
-  <div class="card" data-name="Ocean">
+  <div class="card" data-name="Ocean" data-category="nature" data-iframe="ocean">
     <img src="https://picsum.photos/400?random=1" alt="">
     <div class="counter">0</div>
   </div>
-  <div class="card" data-name="Forest">
+  <div class="card" data-name="Forest" data-category="nature" data-iframe="forest">
     <img src="https://picsum.photos/400?random=2" alt="">
     <div class="counter">0</div>
   </div>
-  <div class="card" data-name="Mountains">
+  <div class="card" data-name="Galaxy" data-category="space" data-iframe="galaxy">
     <img src="https://picsum.photos/400?random=3" alt="">
     <div class="counter">0</div>
   </div>
-  <div class="card" data-name="City">
+  <div class="card" data-name="City" data-category="city" data-iframe="city">
     <img src="https://picsum.photos/400?random=4" alt="">
-    <div class="counter">0</div>
-  </div>
-  <div class="card" data-name="Desert">
-    <img src="https://picsum.photos/400?random=5" alt="">
-    <div class="counter">0</div>
-  </div>
-  <div class="card" data-name="Galaxy">
-    <img src="https://picsum.photos/400?random=6" alt="">
-    <div class="counter">0</div>
-  </div>
-  <div class="card" data-name="Snow">
-    <img src="https://picsum.photos/400?random=7" alt="">
-    <div class="counter">0</div>
-  </div>
-  <div class="card" data-name="Lake">
-    <img src="https://picsum.photos/400?random=8" alt="">
-    <div class="counter">0</div>
-  </div>
-  <div class="card" data-name="Sunset">
-    <img src="https://picsum.photos/400?random=9" alt="">
-    <div class="counter">0</div>
-  </div>
-  <div class="card" data-name="Jungle">
-    <img src="https://picsum.photos/400?random=10" alt="">
     <div class="counter">0</div>
   </div>
 </div>
 
 <script>
 const toggleBtn = document.getElementById('toggleBtn');
-const searchContainer = document.getElementById('searchContainer');
-const input = document.getElementById('searchInput');
+const searchOptions = document.getElementById('searchOptions');
+const searchInput = document.getElementById('searchInput');
 const cards = document.querySelectorAll('.card');
 
-// Toggle search bar
+// Toggle search options
 toggleBtn.addEventListener('click', () => {
-  searchContainer.classList.toggle('active');
-  if(searchContainer.classList.contains('active')) input.focus();
-  else { input.value=''; filterCards(''); }
+  searchOptions.classList.toggle('active');
 });
 
-// Filter cards by hidden names
-input.addEventListener('input', ()=>filterCards(input.value.toLowerCase()));
-function filterCards(query){
+// Filter by option buttons
+searchOptions.addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  const filter = e.target.dataset.filter;
   cards.forEach(card=>{
-    const name = card.getAttribute('data-name').toLowerCase();
-    card.style.display = name.includes(query)?'block':'none';
+    if(filter==='all' || card.dataset.category===filter) card.style.display='block';
+    else card.style.display='none';
   });
-}
+});
 
-// Load counters from localStorage
+// Typing search
+searchInput.addEventListener('input', ()=>{
+  const term = searchInput.value.toLowerCase();
+  cards.forEach(card=>{
+    const name = card.dataset.name.toLowerCase();
+    card.style.display = name.includes(term) ? 'block' : 'none';
+  });
+});
+
+// Counter + page open
 cards.forEach(card=>{
   const name = card.getAttribute('data-name');
+  const iframeId = card.getAttribute('data-iframe');
   const counter = card.querySelector('.counter');
   let count = parseInt(localStorage.getItem(name)) || 0;
   counter.textContent = count;
 
-  // Increment counter on image click
-  card.querySelector('img').addEventListener('click', ()=>{
+  card.addEventListener('click', ()=>{
     count++;
     counter.textContent = count;
     localStorage.setItem(name,count);
+    window.location.href = `viewer.html?view=${iframeId}`;
   });
 });
 </script>
