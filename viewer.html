@@ -19,11 +19,7 @@
     overflow: hidden;
   }
 
-  .layout {
-    display: flex;
-    height: 100%;
-    width: 100%;
-  }
+  .layout { display: flex; height: 100%; width: 100%; position: relative; }
 
   /* Sidebar */
   .sidebar {
@@ -35,7 +31,28 @@
     padding: 12px 0;
     gap: 14px;
     box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+    z-index: 2;
   }
+  .sidebar.hidden { transform: translateX(-100%); }
+
+  /* Toggle button */
+  .toggle-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    padding: 8px 14px;
+    cursor: pointer;
+    z-index: 3;
+    transition: transform 0.3s ease;
+    font-size: 1.2rem;
+  }
+  .toggle-btn.open { transform: rotate(45deg); }
 
   .side-btn {
     width: 60px;
@@ -45,18 +62,26 @@
     border: 2px solid transparent;
     overflow: hidden;
     cursor: pointer;
+    position: relative;
     transition: 0.2s;
   }
+  .side-btn:hover { transform: scale(1.05); border-color: var(--accent); }
+  .side-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-  .side-btn:hover {
-    transform: scale(1.05);
-    border-color: var(--accent);
-  }
-
-  .side-btn img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .counter {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
   }
 
   .back {
@@ -75,22 +100,9 @@
   }
   .back:hover { background: #35363d; border-color: var(--accent); }
 
-  /* Main iframe area */
-  .main {
-    flex: 1;
-    position: relative;
-    background: #000;
-  }
+  .main { flex: 1; position: relative; background: #000; }
+  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
 
-  iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-
-  /* Top title bar */
   .titlebar {
     position: absolute;
     top: 12px;
@@ -114,10 +126,11 @@
 </head>
 <body>
 
+<button class="toggle-btn" id="toggleSidebar">☰</button>
+
 <div class="layout">
-  <aside class="sidebar" id="sidebar">
+  <aside class="sidebar hidden" id="sidebar">
     <button class="back" id="backBtn">←</button>
-    <!-- The same buttons from index.html will appear here -->
   </aside>
   <main class="main">
     <div class="titlebar"><span id="title">Loading...</span></div>
@@ -127,12 +140,13 @@
 
 <script>
 const params = new URLSearchParams(location.search);
-const view = params.get('view') || '';
+let view = params.get('view') || '';
 const titleEl = document.getElementById('title');
 const frame = document.getElementById('contentFrame');
 const sidebar = document.getElementById('sidebar');
+const toggleBtn = document.getElementById('toggleSidebar');
 
-// Map from view keys to URLs (change these if you want local files instead)
+// Map from view keys to URLs
 const map = {
   ocean: 'https://en.wikipedia.org/wiki/Ocean',
   forest: 'https://en.wikipedia.org/wiki/Forest',
@@ -140,42 +154,66 @@ const map = {
   city: 'https://en.wikipedia.org/wiki/City'
 };
 
-// Load iframe content
-if (map[view]) {
-  titleEl.textContent = capitalize(view);
-  frame.src = map[view];
-} else {
-  titleEl.textContent = 'Unknown';
-  frame.src = 'about:blank';
-}
+// Load initial iframe content
+loadView(view);
 
-// Build side buttons from same options
+// Build side buttons dynamically with counters
 for (const [key, url] of Object.entries(map)) {
   const btn = document.createElement('div');
   btn.className = 'side-btn';
   btn.title = capitalize(key);
-  btn.innerHTML = `<img src="https://picsum.photos/seed/${key}/100/100" alt="${key}">`;
+  btn.innerHTML = `
+    <img src="https://picsum.photos/seed/${key}/100/100" alt="${key}">
+    <div class="counter" id="counter-${key}">${getCounter(key)}</div>
+  `;
   btn.onclick = () => {
-    titleEl.textContent = capitalize(key);
-    frame.src = url;
+    incrementCounter(key);
+    loadView(key);
   };
   sidebar.appendChild(btn);
 }
 
-// Back button should go back to gallery (index.html)
+// Functions
+function loadView(key) {
+  view = key;
+  titleEl.textContent = capitalize(key);
+  frame.src = map[key] || 'about:blank';
+  updateAllCounters();
+}
+
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function getCounter(name){
+  return parseInt(localStorage.getItem('count:' + name) || '0');
+}
+
+function incrementCounter(name){
+  const count = getCounter(name) + 1;
+  localStorage.setItem('count:' + name, count);
+  return count;
+}
+
+function updateAllCounters(){
+  for(const key of Object.keys(map)){
+    const el = document.getElementById('counter-' + key);
+    if(el) el.textContent = getCounter(key);
+  }
+}
+
+// Toggle sidebar
+toggleBtn.onclick = () => {
+  sidebar.classList.toggle('hidden');
+  toggleBtn.classList.toggle('open');
+};
+
+// Back button
 document.getElementById('backBtn').onclick = () => {
-  if (window.opener && !window.opener.closed) {
-    window.close(); // closes the viewer tab
+  if(window.opener && !window.opener.closed){
+    window.close(); // close the viewer tab
   } else {
-    // fallback if opened standalone
     location.href = 'index.html';
   }
 };
-
-function capitalize(s) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
 </script>
-
 </body>
 </html>
