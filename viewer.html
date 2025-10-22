@@ -8,32 +8,65 @@
   html,body{
     margin:0;
     padding:0;
+    width:100%;
+    height:100%;
     background:#0e0f12;
     color:#fff;
     font-family:Inter,system-ui,Arial,sans-serif;
-    width:100%;
-    height:100%;
-    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
   }
   iframe{
-    width:100%;
-    height:100%;
+    width:90%;
+    height:80vh;
     border:none;
+    border-radius:12px;
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+  }
+  a{
+    color:#7c5cff;
+    text-decoration:none;
+    margin-top:20px;
+    font-weight:600;
   }
 </style>
 </head>
 <body>
+
+<h1 id="title">Loading...</h1>
 <iframe id="contentFrame"></iframe>
+<a href="index.html">← Back to Gallery</a>
+
 <script>
-const params=new URLSearchParams(location.search);
+const params=new URLSearchParams(window.location.search);
 const view=params.get("view");
-const map={
-  ocean:"https://en.wikipedia.org/wiki/Ocean",
-  forest:"https://en.wikipedia.org/wiki/Forest",
-  galaxy:"https://en.wikipedia.org/wiki/Galaxy",
-  city:"https://en.wikipedia.org/wiki/City"
-};
-document.getElementById("contentFrame").src=map[view]||"https://example.com";
+const iframe=document.getElementById("contentFrame");
+const title=document.getElementById("title");
+
+switch(view){
+  case "ocean":
+    title.textContent="Ocean Explorer";
+    iframe.src="https://en.wikipedia.org/wiki/Ocean";
+    break;
+  case "forest":
+    title.textContent="Forest Overview";
+    iframe.src="https://en.wikipedia.org/wiki/Forest";
+    break;
+  case "galaxy":
+    title.textContent="Galaxy Viewer";
+    iframe.src="https://en.wikipedia.org/wiki/Galaxy";
+    break;
+  case "city":
+    title.textContent="City Life";
+    iframe.src="https://en.wikipedia.org/wiki/City";
+    break;
+  default:
+    title.textContent="Unknown Content";
+    iframe.src="https://example.com";
+}
 </script>
+
 </body>
 </html>
