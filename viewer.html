@@ -1,32 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Viewer</title>
 <style>
-  html,body{height:100%;margin:0;background:#0e0f12;color:#fff;font-family:Inter,Arial,sans-serif;display:flex;flex-direction:column;align-items:center}
-  .wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
-  iframe.content{width:100%;height:100%;border:0;background:#fff}
-  .bar{position:fixed;top:12px;left:12px;z-index:9999}
-  .back{display:inline-block;padding:8px 12px;border-radius:8px;background:#232326;color:#fff;text-decoration:none;font-weight:600}
+  :root {
+    --bg: #0e0f12;
+    --panel: #18191c;
+    --accent: #7c5cff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: #fff;
+    font-family: Inter, system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  .layout {
+    display: flex;
+    height: 100%;
+    width: 100%;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 80px;
+    background: var(--panel);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    gap: 14px;
+    box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+  }
+
+  .side-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: #1f2024;
+    border: 2px solid transparent;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .side-btn:hover {
+    transform: scale(1.05);
+    border-color: var(--accent);
+  }
+
+  .side-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .back {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    background: #2b2c31;
+    border: 2px solid #444;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+  }
+  .back:hover { background: #35363d; border-color: var(--accent); }
+
+  /* Main iframe area */
+  .main {
+    flex: 1;
+    position: relative;
+    background: #000;
+  }
+
+  iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Top title bar */
+  .titlebar {
+    position: absolute;
+    top: 12px;
+    left: 100px;
+    right: 20px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ccc;
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  @media (max-width: 700px) {
+    .sidebar { width: 65px; }
+    .side-btn, .back { width: 50px; height: 50px; }
+    .titlebar { left: 85px; font-size: 0.9rem; }
+  }
 </style>
 </head>
 <body>
-  <div class="bar"><a class="back" id="backBtn" href="#" onclick="history.back();return false">← Back</a></div>
-  <div class="wrap" id="wrap">
-    <h2 id="title" style="margin-bottom:12px">Loading…</h2>
-    <iframe id="contentFrame" class="content" src=""></iframe>
-  </div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <button class="back" id="backBtn">←</button>
+    <!-- The same buttons from index.html will appear here -->
+  </aside>
+  <main class="main">
+    <div class="titlebar"><span id="title">Loading...</span></div>
+    <iframe id="contentFrame" src="about:blank"></iframe>
+  </main>
+</div>
 
 <script>
-// viewer.html reads ?view= and maps to a URL or local page
 const params = new URLSearchParams(location.search);
 const view = params.get('view') || '';
 const titleEl = document.getElementById('title');
 const frame = document.getElementById('contentFrame');
+const sidebar = document.getElementById('sidebar');
 
-// map keys to pages (edit to point to your own local pages if you want)
+// Map from view keys to URLs (change these if you want local files instead)
 const map = {
   ocean: 'https://en.wikipedia.org/wiki/Ocean',
   forest: 'https://en.wikipedia.org/wiki/Forest',
@@ -34,15 +140,42 @@ const map = {
   city: 'https://en.wikipedia.org/wiki/City'
 };
 
+// Load iframe content
 if (map[view]) {
-  titleEl.textContent = ucfirst(view);
+  titleEl.textContent = capitalize(view);
   frame.src = map[view];
 } else {
   titleEl.textContent = 'Unknown';
   frame.src = 'about:blank';
 }
 
-function ucfirst(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+// Build side buttons from same options
+for (const [key, url] of Object.entries(map)) {
+  const btn = document.createElement('div');
+  btn.className = 'side-btn';
+  btn.title = capitalize(key);
+  btn.innerHTML = `<img src="https://picsum.photos/seed/${key}/100/100" alt="${key}">`;
+  btn.onclick = () => {
+    titleEl.textContent = capitalize(key);
+    frame.src = url;
+  };
+  sidebar.appendChild(btn);
+}
+
+// Back button should go back to gallery (index.html)
+document.getElementById('backBtn').onclick = () => {
+  if (window.opener && !window.opener.closed) {
+    window.close(); // closes the viewer tab
+  } else {
+    // fallback if opened standalone
+    location.href = 'index.html';
+  }
+};
+
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 </script>
+
 </body>
 </html>
