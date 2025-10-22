@@ -1,72 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Viewer</title>
 <style>
-  html,body{
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    background:#0e0f12;
-    color:#fff;
-    font-family:Inter,system-ui,Arial,sans-serif;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-  }
-  iframe{
-    width:90%;
-    height:80vh;
-    border:none;
-    border-radius:12px;
-    box-shadow:0 0 25px rgba(0,0,0,0.4);
-  }
-  a{
-    color:#7c5cff;
-    text-decoration:none;
-    margin-top:20px;
-    font-weight:600;
-  }
+  html,body{height:100%;margin:0;background:#0e0f12;color:#fff;font-family:Inter,Arial,sans-serif;display:flex;flex-direction:column;align-items:center}
+  .wrap{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  iframe.content{width:100%;height:100%;border:0;background:#fff}
+  .bar{position:fixed;top:12px;left:12px;z-index:9999}
+  .back{display:inline-block;padding:8px 12px;border-radius:8px;background:#232326;color:#fff;text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
-
-<h1 id="title">Loading...</h1>
-<iframe id="contentFrame"></iframe>
-<a href="index.html">← Back to Gallery</a>
+  <div class="bar"><a class="back" id="backBtn" href="#" onclick="history.back();return false">← Back</a></div>
+  <div class="wrap" id="wrap">
+    <h2 id="title" style="margin-bottom:12px">Loading…</h2>
+    <iframe id="contentFrame" class="content" src=""></iframe>
+  </div>
 
 <script>
-const params=new URLSearchParams(window.location.search);
-const view=params.get("view");
-const iframe=document.getElementById("contentFrame");
-const title=document.getElementById("title");
+// viewer.html reads ?view= and maps to a URL or local page
+const params = new URLSearchParams(location.search);
+const view = params.get('view') || '';
+const titleEl = document.getElementById('title');
+const frame = document.getElementById('contentFrame');
 
-switch(view){
-  case "ocean":
-    title.textContent="Ocean Explorer";
-    iframe.src="https://en.wikipedia.org/wiki/Ocean";
-    break;
-  case "forest":
-    title.textContent="Forest Overview";
-    iframe.src="https://en.wikipedia.org/wiki/Forest";
-    break;
-  case "galaxy":
-    title.textContent="Galaxy Viewer";
-    iframe.src="https://en.wikipedia.org/wiki/Galaxy";
-    break;
-  case "city":
-    title.textContent="City Life";
-    iframe.src="https://en.wikipedia.org/wiki/City";
-    break;
-  default:
-    title.textContent="Unknown Content";
-    iframe.src="https://example.com";
+// map keys to pages (edit to point to your own local pages if you want)
+const map = {
+  ocean: 'https://en.wikipedia.org/wiki/Ocean',
+  forest: 'https://en.wikipedia.org/wiki/Forest',
+  galaxy: 'https://en.wikipedia.org/wiki/Galaxy',
+  city: 'https://en.wikipedia.org/wiki/City'
+};
+
+if (map[view]) {
+  titleEl.textContent = ucfirst(view);
+  frame.src = map[view];
+} else {
+  titleEl.textContent = 'Unknown';
+  frame.src = 'about:blank';
 }
-</script>
 
+function ucfirst(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+</script>
 </body>
 </html>
