@@ -11,30 +11,27 @@
     --accent:#7c5cff;
     --gap:18px;
   }
-  * {box-sizing:border-box;margin:0;padding:0;}
-  body {
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
     background:var(--bg);
     color:#fff;
     font-family:Inter,system-ui,Arial,sans-serif;
   }
-
-  header {
+  header{
     background:linear-gradient(90deg,#1b1b1b,#262626);
     text-align:center;
     padding:80px 20px;
     font-size:3em;
     font-weight:800;
   }
-
-  .search-bar {
+  .search-bar{
     display:flex;
     justify-content:center;
     align-items:center;
     gap:10px;
     margin:30px auto 10px;
   }
-
-  .search-bar input {
+  .search-bar input{
     width:220px;
     padding:10px 14px;
     border-radius:8px;
@@ -43,8 +40,7 @@
     color:#fff;
     font-size:1em;
   }
-
-  .search-toggle {
+  .search-toggle{
     background:var(--accent);
     color:#fff;
     border:none;
@@ -52,42 +48,29 @@
     border-radius:10px;
     font-weight:600;
     cursor:pointer;
-    transition:transform .2s ease, box-shadow .2s ease;
   }
-  .search-toggle:hover {
-    transform:scale(1.05);
-    box-shadow:0 0 20px rgba(124,92,255,0.3);
-  }
-
-  .search-options {
+  .search-options{
     display:none;
     justify-content:center;
     gap:10px;
     margin-bottom:30px;
   }
-  .search-options.active {display:flex;}
-  .search-options button {
+  .search-options.active{display:flex;}
+  .search-options button{
     background:#1d1d1f;
     border:1px solid #333;
     color:#fff;
     border-radius:8px;
     padding:10px 14px;
     cursor:pointer;
-    transition:all .2s ease;
   }
-  .search-options button:hover {
-    background:var(--accent);
-    border-color:var(--accent);
-  }
-
-  .card-grid {
+  .card-grid{
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
     gap:var(--gap);
     padding:40px;
   }
-
-  .card {
+  .card{
     position:relative;
     border-radius:14px;
     overflow:hidden;
@@ -96,18 +79,17 @@
     background:var(--panel);
     transition:transform .2s ease, box-shadow .2s ease;
   }
-  .card:hover {
+  .card:hover{
     transform:translateY(-5px) scale(1.02);
     box-shadow:0 8px 20px rgba(0,0,0,0.45);
   }
-  .card img {
+  .card img{
     width:100%;
     height:100%;
     object-fit:cover;
     display:block;
   }
-
-  .counter {
+  .counter{
     position:absolute;
     top:8px;
     right:8px;
@@ -123,7 +105,6 @@
     color:#fff;
     pointer-events:none;
   }
-
 </style>
 </head>
 <body>
@@ -162,48 +143,59 @@
 </div>
 
 <script>
-const toggleBtn = document.getElementById('toggleBtn');
-const searchOptions = document.getElementById('searchOptions');
-const searchInput = document.getElementById('searchInput');
-const cards = document.querySelectorAll('.card');
+const toggleBtn=document.getElementById('toggleBtn');
+const searchOptions=document.getElementById('searchOptions');
+const searchInput=document.getElementById('searchInput');
+const cards=document.querySelectorAll('.card');
 
-// Toggle search options
-toggleBtn.addEventListener('click', () => {
-  searchOptions.classList.toggle('active');
-});
+// Toggle dropdown
+toggleBtn.addEventListener('click',()=>searchOptions.classList.toggle('active'));
 
-// Filter by option buttons
-searchOptions.addEventListener('click', e=>{
-  if(e.target.tagName !== 'BUTTON') return;
-  const filter = e.target.dataset.filter;
+// Filter by buttons
+searchOptions.addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  const filter=e.target.dataset.filter;
   cards.forEach(card=>{
-    if(filter==='all' || card.dataset.category===filter) card.style.display='block';
+    if(filter==='all'||card.dataset.category===filter) card.style.display='block';
     else card.style.display='none';
   });
 });
 
-// Typing search
-searchInput.addEventListener('input', ()=>{
-  const term = searchInput.value.toLowerCase();
+// Typing filter
+searchInput.addEventListener('input',()=>{
+  const term=searchInput.value.toLowerCase();
   cards.forEach(card=>{
-    const name = card.dataset.name.toLowerCase();
-    card.style.display = name.includes(term) ? 'block' : 'none';
+    card.style.display=card.dataset.name.toLowerCase().includes(term)?'block':'none';
   });
 });
 
-// Counter + page open
+// Counter + open about:blank with viewer.html iframe
 cards.forEach(card=>{
-  const name = card.getAttribute('data-name');
-  const iframeId = card.getAttribute('data-iframe');
-  const counter = card.querySelector('.counter');
-  let count = parseInt(localStorage.getItem(name)) || 0;
-  counter.textContent = count;
-
-  card.addEventListener('click', ()=>{
+  const name=card.dataset.name;
+  const iframeId=card.dataset.iframe;
+  const counter=card.querySelector('.counter');
+  let count=parseInt(localStorage.getItem(name))||0;
+  counter.textContent=count;
+  card.addEventListener('click',()=>{
     count++;
-    counter.textContent = count;
     localStorage.setItem(name,count);
-    window.location.href = `viewer.html?view=${iframeId}`;
+    counter.textContent=count;
+
+    // open about:blank and inject iframe to viewer.html
+    const newTab=window.open('about:blank','_blank');
+    newTab.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>${name}</title>
+      <style>html,body{margin:0;padding:0;width:100%;height:100%;background:#0e0f12;overflow:hidden;}
+      iframe{width:100%;height:100%;border:none;}</style>
+      </head>
+      <body>
+        <iframe src="viewer.html?view=${iframeId}"></iframe>
+      </body>
+      </html>
+    `);
+    newTab.document.close();
   });
 });
 </script>
