@@ -100,8 +100,26 @@
   }
   .back:hover { background: #35363d; border-color: var(--accent); }
 
-  .main { flex: 1; position: relative; background: #000; }
-  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+  .main {
+  flex: 1;
+  position: relative;
+  background: radial-gradient(circle at top left, #0e0f12, #0a0a0c);
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  max-height: 800px;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  background: #101012;
+}
 
   .titlebar {
     position: absolute;
