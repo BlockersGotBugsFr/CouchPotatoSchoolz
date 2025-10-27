@@ -6,18 +6,25 @@
 <title>Viewer</title>
 <style>
   :root {
-    --bg: #0e0f12;
-    --panel: #18191c;
-    --accent: #7c5cff;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: #fff;
-    font-family: Inter, system-ui, sans-serif;
-    overflow: hidden;
-  }
+  --bg: #0e0f12; /* Keep a fallback color */
+  --panel: #18191c;
+  --accent: #7c5cff;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html, body {
+  height: 100%;
+  /* Set the background image and its properties */
+  background: var(--bg) url('CPSBackgroundImg.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  font-family: Inter, system-ui, sans-serif;
+  overflow: hidden;
+}
+
 
   .layout { display: flex; height: 100%; width: 100%; position: relative; }
 
