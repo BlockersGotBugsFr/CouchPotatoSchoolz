@@ -6,10 +6,24 @@
 <title>Couch Potato Schools</title>
 <style>
   :root{
-    --bg:#0e0f12; --panel:#151618; --accent:#7c5cff; --gap:18px;
+    --bg:#0e0f12; /* Keep a fallback color */
+    --panel:#151618; 
+    --accent:#7c5cff; 
+    --gap:18px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{min-height:100vh;background:var(--bg);color:#fff;font-family:Inter,system-ui,Arial}
+  body{
+    min-height:100vh;
+    /* Add the image as the background */
+    background-image: url('CPSBackgroundImg.png');
+    /* Set background properties for better display */
+    background-size: cover; 
+    background-position: center;
+    background-attachment: fixed;
+    background-color: var(--bg); /* Fallback color in case the image doesn't load */
+    color:#fff;
+    font-family:Inter,system-ui,Arial;
+  }
   header{padding:72px 18px;text-align:center;font-size:2.6rem;font-weight:800;background:linear-gradient(90deg,#1b1b1b,#262626)}
   .search-toggle{display:block;margin:20px auto;background:var(--accent);border:none;padding:10px 18px;border-radius:10px;color:#fff;cursor:pointer}
   .search-container{display:flex;justify-content:center;overflow:hidden;height:0;transition:height .28s}
