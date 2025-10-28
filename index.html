@@ -23,6 +23,12 @@
     100% { background-position: 0% 50%; }
   }
 
+  /* Corrected animation for a more flowing effect */
+  @keyframes border-glow-professional {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+  }
+
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     min-height:100vh;
@@ -84,9 +90,9 @@
   
   .card::before {
     background: linear-gradient(135deg, #ff61e2, #4a82ff, #ffbe7c, #82ffc9);
-    background-size: 200% 200%;
+    background-size: 400% 400%; /* Increased size for animation */
     filter: blur(5px);
-    animation: border-glow 8s linear infinite;
+    animation: border-glow-professional 8s linear infinite; /* Corrected animation */
   }
   
   .card::after {
