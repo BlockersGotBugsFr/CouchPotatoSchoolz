@@ -17,10 +17,10 @@
     100% { background-position: 100% 100%; }
   }
 
-  @keyframes rotate {
-    to {
-      transform: rotate(360deg);
-    }
+  @keyframes border-glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -45,7 +45,7 @@
   
   .card{
     position: relative;
-    isolation: isolate;
+    z-index: 1; /* Give it a stacking context */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -74,24 +74,26 @@
     border-radius: 12px;
   }
   
-  .card::after {
+  .card::before, .card::after {
     content: '';
     position: absolute;
-    inset: -2px;
-    z-index: -1;
+    inset: 0;
     border-radius: 12px;
-    /* This creates a rotating glow effect rather than a grid pattern */
-    background: conic-gradient(
-      #ff61e2 0deg,
-      #4a82ff 90deg,
-      #ffbe7c 180deg,
-      #82ffc9 270deg,
-      #ff61e2 360deg
-    );
-    filter: blur(5px);
-    animation: rotate 4s linear infinite;
+    z-index: -1;
   }
   
+  .card::before {
+    background: linear-gradient(135deg, #ff61e2, #4a82ff, #ffbe7c, #82ffc9);
+    background-size: 200% 200%;
+    filter: blur(5px);
+    animation: border-glow 8s linear infinite;
+  }
+  
+  .card::after {
+    background: var(--panel);
+    inset: 2px; /* This creates the thin border by masking the gradient */
+  }
+
   .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 12px 30px rgba(0,0,0,.5)}
   .counter{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(124,92,255,.85);display:flex;align-items:center;justify-content:center;font-weight:700}
   .footer-note{color:#9aa3b2;text-align:center;padding:18px 12px 36px;font-size:0.95rem}
@@ -101,7 +103,6 @@
     .search-container input{width:84%} 
   }
 </style>
-
 
 
 </head>
