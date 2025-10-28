@@ -11,6 +11,11 @@
     --accent:#7c5cff; 
     --gap:18px;
   }
+
+  @keyframes background-pan {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     min-height:100vh;
@@ -23,6 +28,10 @@
     background-color: var(--bg); /* Fallback color in case the image doesn't load */
     color:#fff;
     font-family:Inter,system-ui,Arial;
+      /* ... existing body styles ... */
+  background-repeat: repeat; /* Ensure the image repeats */
+  background-size: 150%; /* Make the background larger to allow for panning */
+  animation: background-pan 50s linear infinite;
   }
   header{padding:72px 18px;text-align:center;font-size:2.6rem;font-weight:800;background:linear-gradient(90deg,#1b1b1b,#262626)}
   .search-toggle{display:block;margin:20px auto;background:var(--accent);border:none;padding:10px 18px;border-radius:10px;color:#fff;cursor:pointer}
