@@ -17,15 +17,9 @@
     100% { background-position: 100% 100%; }
   }
 
-  @property --angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-  }
-  
   @keyframes rotate {
     to {
-      --angle: 360deg;
+      transform: rotate(360deg);
     }
   }
 
@@ -52,11 +46,11 @@
   .card{
     position: relative;
     isolation: isolate;
-    display: flex; /* Use flexbox to center content */
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px; /* Add padding for spacing */
+    padding: 20px;
     border-radius: 12px;
     overflow: hidden;
     aspect-ratio: 1/1;
@@ -66,18 +60,18 @@
   }
 
   .card-image-wrapper {
-    width: 60%; /* Make the image smaller relative to the card */
+    width: 60%;
     aspect-ratio: 1/1;
     overflow: hidden;
-    border-radius: 12px; /* Apply border-radius to the wrapper */
+    border-radius: 12px;
   }
 
   .card img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* This is key to making the image fit correctly */
+    object-fit: cover;
     display: block;
-    border-radius: 12px; /* Ensure image also has border-radius */
+    border-radius: 12px;
   }
   
   .card::after {
@@ -86,13 +80,16 @@
     inset: -2px;
     z-index: -1;
     border-radius: 12px;
-    background: repeating-conic-gradient(
-      var(--accent) 0 90deg,
-      #151618 90deg 180deg
+    /* This creates a rotating glow effect rather than a grid pattern */
+    background: conic-gradient(
+      #ff61e2 0deg,
+      #4a82ff 90deg,
+      #ffbe7c 180deg,
+      #82ffc9 270deg,
+      #ff61e2 360deg
     );
-    background-size: 50px 50px; /* Control the size of the grid squares */
     filter: blur(5px);
-    animation: rotate 8s linear infinite; /* Adjust speed for the grid */
+    animation: rotate 4s linear infinite;
   }
   
   .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 12px 30px rgba(0,0,0,.5)}
@@ -104,6 +101,7 @@
     .search-container input{width:84%} 
   }
 </style>
+
 
 
 </head>
