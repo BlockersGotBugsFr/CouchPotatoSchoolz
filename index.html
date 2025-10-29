@@ -7,7 +7,7 @@
 <style>
   :root{
     --bg:#0e0f12;
-    --panel:#151618;
+    --panel:#151616;
     --accent:#7c5cff;
     --gap:18px;
   }
@@ -28,12 +28,38 @@
     color:#fff;
     font-family:Inter,system-ui,Arial;
     animation:background-pan 50s linear infinite;
-    overflow-x:hidden;
+    /* This overflow property conflicts with position: sticky */
+    /* Remove or set to visible: `overflow-x: visible;` or `overflow: visible;` */
   }
 
-  header{padding:72px 18px;text-align:center;font-size:2.6rem;font-weight:800;position:sticky;background:linear-gradient(90deg,#1b1b1b,#262626)}
+  header{
+    padding:72px 18px;
+    text-align:center;
+    font-size:2.6rem;
+    font-weight:800;
+    
+    /* Make header sticky */
+    position:sticky;
+    top:0;
+    
+    /* Glassmorphism effect */
+    background:rgba(21, 22, 24, 0.6);
+    backdrop-filter:blur(10px);
+    z-index:1000;
+  }
   .search-toggle{display:block;margin:20px auto;background:var(--accent);border:none;padding:10px 18px;border-radius:10px;color:#fff;cursor:pointer}
-  .search-container{display:flex;justify-content:center;overflow:hidden;height:0;transition:height .28s}
+  .search-container{
+    display:flex;
+    justify-content:center;
+    overflow:hidden;
+    height:0;
+    transition:height .28s;
+    
+    /* Make search bar sticky */
+    position:sticky;
+    top:154px; /* Default value, updated by JS */
+    z-index:999;
+  }
   .search-container.active{height:68px}
   .search-container input{width:60%;max-width:520px;margin-top:14px;padding:12px 14px;border-radius:10px;border:0;background:#1d1d1f;color:#fff}
 
@@ -86,7 +112,7 @@
     position: relative;
     perspective:1000px;
     background:radial-gradient(circle at center, #0e0f12 0%, #090a0c 100%);
-     padding: 120px 0 200px 0;
+    /* This padding was causing issues. Instead, removed it. */
   }
   .banner{
     transform-style:preserve-3d;
