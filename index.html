@@ -31,7 +31,15 @@
     overflow-x:hidden;
   }
 
-  header{padding:72px 18px;text-align:center;font-size:2.6rem;font-weight:800;background:linear-gradient(90deg,#1b1b1b,#262626)}
+    header{
+    padding:72px 18px;
+    text-align:center;
+    font-size:2.6rem;
+    font-weight:800;
+    
+    /* Make header sticky */
+    position:sticky;
+    top:0;
   .search-toggle{display:block;margin:20px auto;background:var(--accent);border:none;padding:10px 18px;border-radius:10px;color:#fff;cursor:pointer}
   .search-container{display:flex;justify-content:center;overflow:hidden;height:0;transition:height .28s}
   .search-container.active{height:68px}
