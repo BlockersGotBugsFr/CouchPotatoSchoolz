@@ -168,6 +168,8 @@
 <section class="banner-section">
   <div class="banner">Couch Potato Schoolz</div>
   <div class="banner">idk</div>
+  <div class="banner">idk</div>
+  <div class="banner">idk</div>
 </section>
 
 <div class="footer-note">Click a square to open its viewer in a new about:blank tab (viewer loads inside an iframe).</div>
@@ -208,49 +210,6 @@ cards.forEach(card=>{
   });
 });
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
-/* 3D Banner Animations */
-gsap.registerPlugin(ScrollTrigger);
-gsap.utils.toArray(".banner").forEach((banner,i)=>{
-  gsap.fromTo(banner,
-    {opacity:0,y:200,rotateX:60,scale:0.8},
-    {
-      opacity:1,y:0,rotateX:0,scale:1,
-      scrollTrigger:{
-        trigger:banner,
-        start:"top 80%",
-        end:"top 20%",
-        scrub:true
-      },
-      duration:1.5,
-      ease:"power3.out"
-    });
-});
-
-  document.addEventListener('DOMContentLoaded', () => {
-  const toggleBtn = document.getElementById('toggleBtn');
-  const searchContainer = document.getElementById('searchContainer');
-  const searchInput = document.getElementById('searchInput');
-
-  toggleBtn.addEventListener('click', () => {
-    const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-
-    // Toggle the `is-visible` class to start/reverse the CSS animation
-    searchContainer.classList.toggle('is-visible');
-
-    // Update accessibility attributes
-    toggleBtn.setAttribute('aria-expanded', !isExpanded);
-    searchContainer.setAttribute('aria-hidden', isExpanded);
-
-    // Give focus to the input field after a short delay
-    // to allow for the animation to start
-    if (!isExpanded) {
-      setTimeout(() => {
-        searchInput.focus();
-      }, 300); // The delay should match the CSS transition duration
-    }
-  });
-});
 
 </script>
 </body>
