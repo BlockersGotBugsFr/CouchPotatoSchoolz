@@ -110,6 +110,40 @@
     .search-container input{width:84%}
     .banner{font-size:2.4rem}
   }
+
+  /* Base styles for the search container */
+.search-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, margin-top 0.3s ease-in-out;
+  margin-top: 0;
+}
+
+/* Styles for the visible state */
+.search-container.is-visible {
+  max-height: 50px; /* Adjust this value to be slightly larger than the actual height of the search bar */
+  margin-top: 10px;
+}
+
+/* Styles for the input field */
+.search-container input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+/* Optional: Add some basic styling to the button */
+.search-toggle {
+  padding: 10px 15px;
+  cursor: pointer;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  border-radius: 4px;
+}
+
 </style>
 </head>
 <body>
@@ -133,9 +167,7 @@
 <!-- ✨ New 3D Banner Section ✨ -->
 <section class="banner-section">
   <div class="banner">Couch Potato Schoolz</div>
-  <div class="banner">Creative Mindset</div>
-  <div class="banner">Learn. Build. Evolve.</div>
-  <div class="banner">Stay Lazy, Think Smart</div>
+  <div class="banner">idk</div>
 </section>
 
 <div class="footer-note">Click a square to open its viewer in a new about:blank tab (viewer loads inside an iframe).</div>
@@ -194,6 +226,32 @@ gsap.utils.toArray(".banner").forEach((banner,i)=>{
       ease:"power3.out"
     });
 });
+
+  document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('toggleBtn');
+  const searchContainer = document.getElementById('searchContainer');
+  const searchInput = document.getElementById('searchInput');
+
+  toggleBtn.addEventListener('click', () => {
+    const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+
+    // Toggle the `is-visible` class to start/reverse the CSS animation
+    searchContainer.classList.toggle('is-visible');
+
+    // Update accessibility attributes
+    toggleBtn.setAttribute('aria-expanded', !isExpanded);
+    searchContainer.setAttribute('aria-hidden', isExpanded);
+
+    // Give focus to the input field after a short delay
+    // to allow for the animation to start
+    if (!isExpanded) {
+      setTimeout(() => {
+        searchInput.focus();
+      }, 300); // The delay should match the CSS transition duration
+    }
+  });
+});
+
 </script>
 </body>
 </html>
