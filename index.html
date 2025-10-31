@@ -80,35 +80,6 @@
   .counter{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;background:rgba(124,92,255,.85);display:flex;align-items:center;justify-content:center;font-weight:700}
 
   .footer-note{color:#9aa3b2;text-align:center;padding:18px 12px 36px;font-size:0.95rem}
-
-  /* ---------- 3D SCROLL BANNER SECTION ---------- */
-  .banner-section{
-    position: absolute;
-    perspective:1000px;
-    background:radial-gradient(circle at center, #0e0f12 0%, #090a0c 100%);
-    padding:120px 0;
-  }
-  .banner{
-    transform-style:preserve-3d;
-    transform:rotateX(15deg);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:4rem;
-    font-weight:800;
-    color:#fff;
-    text-transform:uppercase;
-    opacity:0.85;
-    will-change:transform,opacity;
-  }
-  .banner:nth-child(odd){color:#7c5cff;}
-  .banner:nth-child(even){color:#ff61e2;}
-
-  @media(max-width:600px){
-    header{font-size:1.8rem}
-    .search-container input{width:84%}
-    .banner{font-size:2.4rem}
-  }
 </style>
 </head>
 <body>
@@ -128,15 +99,6 @@
     <div class="card" data-name="City" data-view="city"><img src="https://picsum.photos/seed/city/800/800"><div class="counter">0</div></div>
   </div>
 </main>
-
-<!-- ✨ New 3D Banner Section ✨ -->
-<section class="banner-section">
-  <div class="banner">Couch Potato Schoolz</div>
-  <div class="banner">Creative Mindset</div>
-  <div class="banner">Learn. Build. Evolve.</div>
-  <div class="banner">Stay Lazy, Think Smart</div>
-</section>
-
 <div class="footer-note">Click a square to open its viewer in a new about:blank tab (viewer loads inside an iframe).</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
