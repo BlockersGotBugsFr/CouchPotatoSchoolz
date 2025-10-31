@@ -38,10 +38,31 @@ html, body {
     padding: 12px 0;
     gap: 14px;
     box-shadow: 4px 0 12px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease;
+    /* Remove the old transition: transform 0.3s ease; */
     z-index: 2;
+    transform: translateX(-100%); /* Start hidden by default */
   }
-  .sidebar.hidden { transform: translateX(-100%); }
+
+  /* Keyframe animations for the bounce effect */
+  @keyframes slideInBounce {
+    0% { transform: translateX(-100%); }
+    70% { transform: translateX(5%); } /* Overshoot by 5% of its width */
+    100% { transform: translateX(0); } /* Final position */
+  }
+
+  @keyframes slideOutBounce {
+    0% { transform: translateX(0); }
+    30% { transform: translateX(5%); } /* Slight initial push */
+    100% { transform: translateX(-100%); } /* Final hidden position */
+  }
+
+  /* Classes to apply the animations */
+  .sidebar.open-animate {
+    animation: slideInBounce 0.5s forwards ease-out;
+  }
+  .sidebar.close-animate {
+    animation: slideOutBounce 0.4s forwards ease-in;
+  }
 
   /* Toggle button */
   .toggle-btn {
@@ -148,6 +169,7 @@ iframe {
     .titlebar { left: 85px; font-size: 0.9rem; }
   }
 </style>
+
 </head>
 <body>
 
@@ -226,9 +248,22 @@ function updateAllCounters(){
 }
 
 // Toggle sidebar
+let isSidebarOpen = false;
+
 toggleBtn.onclick = () => {
-  sidebar.classList.toggle('hidden');
-  toggleBtn.classList.toggle('open');
+  if (isSidebarOpen) {
+    // Closing: Add close animation class, remove open
+    sidebar.classList.add('close-animate');
+    sidebar.classList.remove('open-animate');
+    toggleBtn.classList.remove('open');
+    isSidebarOpen = false;
+  } else {
+    // Opening: Add open animation class, remove close
+    sidebar.classList.add('open-animate');
+    sidebar.classList.remove('close-animate');
+    toggleBtn.classList.add('open');
+    isSidebarOpen = true;
+  }
 };
 
 // Back button
