@@ -110,40 +110,6 @@
     .search-container input{width:84%}
     .banner{font-size:2.4rem}
   }
-
-  /* Base styles for the search container */
-.search-container {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-in-out, margin-top 0.3s ease-in-out;
-  margin-top: 0;
-}
-
-/* Styles for the visible state */
-.search-container.is-visible {
-  max-height: 50px; /* Adjust this value to be slightly larger than the actual height of the search bar */
-  margin-top: 10px;
-}
-
-/* Styles for the input field */
-.search-container input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box; /* Ensures padding doesn't affect width */
-}
-
-/* Optional: Add some basic styling to the button */
-.search-toggle {
-  padding: 10px 15px;
-  cursor: pointer;
-  border: none;
-  background-color: #3498db;
-  color: white;
-  border-radius: 4px;
-}
-
 </style>
 </head>
 <body>
@@ -167,9 +133,9 @@
 <!-- ✨ New 3D Banner Section ✨ -->
 <section class="banner-section">
   <div class="banner">Couch Potato Schoolz</div>
-  <div class="banner">idk</div>
-  <div class="banner">idk</div>
-  <div class="banner">idk</div>
+  <div class="banner">Creative Mindset</div>
+  <div class="banner">Learn. Build. Evolve.</div>
+  <div class="banner">Stay Lazy, Think Smart</div>
 </section>
 
 <div class="footer-note">Click a square to open its viewer in a new about:blank tab (viewer loads inside an iframe).</div>
@@ -211,6 +177,23 @@ cards.forEach(card=>{
 });
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
+/* 3D Banner Animations */
+gsap.registerPlugin(ScrollTrigger);
+gsap.utils.toArray(".banner").forEach((banner,i)=>{
+  gsap.fromTo(banner,
+    {opacity:0,y:200,rotateX:60,scale:0.8},
+    {
+      opacity:1,y:0,rotateX:0,scale:1,
+      scrollTrigger:{
+        trigger:banner,
+        start:"top 80%",
+        end:"top 20%",
+        scrub:true
+      },
+      duration:1.5,
+      ease:"power3.out"
+    });
+});
 </script>
 </body>
 </html>
