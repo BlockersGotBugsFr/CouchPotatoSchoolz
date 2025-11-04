@@ -1,3 +1,3 @@
 # CouchPotatoSchoolz
 
-**[Website Link](**[Live Website Link]()**
+**[Website Link](https://blockersgotbugsfr.github.io/CouchPotatoSchoolz/)**
