@@ -153,20 +153,41 @@ iframe {
     position: absolute;
     top: 12px;
     left: 100px;
-    right: 20px;
+    /* right: 20px;  Removed this to allow controls on the right */
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #ccc;
     font-weight: 600;
-    pointer-events: none;
+    /* pointer-events: none; Removed this to allow clicks on buttons */
   }
+
+  .controls {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  .control-btn {
+    background: var(--panel);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  .control-btn:hover { background: #2b2c31; }
 
   @media (max-width: 700px) {
     .sidebar { width: 65px; }
     .side-btn, .back { width: 50px; height: 50px; }
     .titlebar { left: 85px; font-size: 0.9rem; }
+    .controls { right: 12px; gap: 8px; }
+    .control-btn { padding: 6px 10px; }
   }
 </style>
 
@@ -181,6 +202,10 @@ iframe {
   </aside>
   <main class="main">
     <div class="titlebar"><span id="title">Loading...</span></div>
+    <div class="controls">
+        <button class="control-btn" id="reloadBtn" title="Reload iframe">⟳</button>
+        <button class="control-btn" id="fullscreenBtn" title="Toggle Fullscreen"> maximise</button>
+    </div>
     <iframe id="contentFrame" src="about:blank"></iframe>
   </main>
 </div>
@@ -192,6 +217,8 @@ const titleEl = document.getElementById('title');
 const frame = document.getElementById('contentFrame');
 const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('toggleSidebar');
+const reloadBtn = document.getElementById('reloadBtn');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
 
 // Map from view keys to URLs
 const map = {
@@ -274,6 +301,38 @@ document.getElementById('backBtn').onclick = () => {
     location.href = 'index.html';
   }
 };
+
+// Reload button functionality
+reloadBtn.onclick = () => {
+  frame.src = frame.src; // Reloads the current source
+};
+
+// Fullscreen button functionality (cross-browser)
+fullscreenBtn.onclick = () => {
+  if (document.fullscreenElement) {
+    // If in fullscreen, exit
+    if (document.exitFullscreen) document.exitFullscreen();
+    else if (document.mozCancelFullScreen) document.mozCancelFullScreen(); // Firefox
+    else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); // Chrome, Safari and Opera
+    else if (document.msExitFullscreen) document.msExitFullscreen(); // IE/Edge
+  } else {
+    // If not in fullscreen, request it for the main container
+    const mainEl = document.querySelector('.main');
+    if (mainEl.requestFullscreen) mainEl.requestFullscreen();
+    else if (mainEl.mozRequestFullScreen) mainEl.mozRequestFullScreen(); // Firefox
+    else if (mainEl.webkitRequestFullscreen) mainEl.webkitRequestFullscreen(); // Chrome, Safari and Opera
+    else if (mainEl.msRequestFullscreen) mainEl.msRequestFullscreen(); // IE/Edge
+  }
+};
+
+// Update the fullscreen button text/icon when fullscreen state changes
+document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+        fullscreenBtn.textContent = ' minimise';
+    } else {
+        fullscreenBtn.textContent = ' maximise';
+    }
+});
 </script>
 </body>
 </html>
