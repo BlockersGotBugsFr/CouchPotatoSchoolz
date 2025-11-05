@@ -9,6 +9,7 @@
     --bg:#0e0f12;
     --panel:#151618;
     --accent:#7c5cff;
+    --accent-hover:#945cff;
     --gap:18px;
   }
 
@@ -20,14 +21,11 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     min-height:100vh;
-    background-image:url('assets/CPSBackgroundImg.png');
-    background-size:400%;
-    background-position:center;
-    background-attachment:fixed;
-    background-color:var(--bg);
+    background:linear-gradient(45deg,#0e0f12,#151618,#0e0f12,#1c1d21);
+    background-size:400% 400%;
+    animation:background-pan 60s ease infinite;
     color:#fff;
     font-family:Inter,system-ui,Arial;
-    animation:background-pan 50s ease infinite;
     overflow-x:hidden;
     transition: background-color 0.3s, color 0.3s;
   }
@@ -41,25 +39,53 @@
   }
 
   header{
-    padding:72px 18px;
+    padding:60px 20px 20px;
     text-align:center;
-    font-size:2.6rem;
-    font-weight:800;
+    font-size:3rem;
+    font-weight:900;
+    letter-spacing:1px;
     background:linear-gradient(90deg,#1b1b1b,#262626);
     color:#fff;
+    position:relative;
   }
+
+  header h2{
+    font-weight:400;
+    font-size:1.2rem;
+    color:#aaa;
+    margin-top:6px;
+  }
+
+  .theme-toggle {
+    position:fixed;
+    top:20px;
+    left:20px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:10px 16px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:1.1rem;
+    z-index:1000;
+    transition: background .2s;
+  }
+  .theme-toggle:hover{background:var(--accent-hover)}
 
   .search-toggle{
     display:block;
     margin:20px auto;
     background:var(--accent);
     border:none;
-    padding:10px 18px;
-    border-radius:10px;
+    padding:12px 22px;
+    border-radius:12px;
     color:#fff;
     cursor:pointer;
-    font-weight:600;
+    font-weight:700;
+    font-size:1rem;
+    transition:background 0.3s;
   }
+  .search-toggle:hover{background:var(--accent-hover)}
 
   .search-container{
     display:flex;
@@ -74,80 +100,105 @@
     max-width:520px;
     margin-top:14px;
     padding:12px 14px;
-    border-radius:10px;
+    border-radius:12px;
     border:0;
     background:#1d1d1f;
     color:#fff;
     font-size:1rem;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
   }
   body.dark-theme .search-container input{
     background:#eee;
     color:#111;
   }
 
+  main{
+    padding:32px 20px 80px;
+  }
+
   .card-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
     gap:var(--gap);
-    padding:32px;
     max-width:1280px;
     margin:0 auto;
   }
 
   .card{
     position:relative;
-    z-index:1;
     display:flex;
     justify-content:center;
     align-items:center;
-    padding:20px;
-    border-radius:12px;
+    border-radius:16px;
     overflow:hidden;
     aspect-ratio:1/1;
     cursor:pointer;
     background:var(--panel);
-    transition:transform .18s, box-shadow .18s;
-    perspective: 1000px;
+    transition: transform .25s, box-shadow .25s;
+    perspective:1000px;
   }
 
   .card img{
     width:100%;
     height:100%;
     object-fit:cover;
-    border-radius:12px;
+    border-radius:16px;
+    transition: transform .25s;
   }
 
-  .card::before,.card::after{
+  .card::before{
     content:'';
     position:absolute;
     inset:0;
-    border-radius:12px;
-    z-index:-1;
-  }
-  .card::before{
     background:linear-gradient(135deg,#ff61e2,#4a82ff,#ffbe7c,#82ffc9);
     background-size:400% 400%;
-    filter:blur(5px);
+    filter:blur(8px);
+    opacity:0.4;
+    border-radius:16px;
     animation:borderGlow 8s linear infinite;
+    z-index:0;
   }
   .card::after{
-    background:var(--panel);
+    content:'';
+    position:absolute;
     inset:2px;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+    background:var(--panel);
+    border-radius:16px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+    z-index:1;
   }
-  @keyframes borderGlow {
+  @keyframes borderGlow{
     0%{background-position:0 0;}
     100%{background-position:100% 100%;}
   }
 
-  .card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .card:hover{transform:translateY(-8px) scale(1.05); box-shadow:0 18px 40px rgba(0,0,0,0.5)}
+
+  .card-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    opacity:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+    font-weight:700;
+    font-size:1.1rem;
+    text-align:center;
+    padding:12px;
+    transition:opacity 0.3s;
+    z-index:2;
+    border-radius:16px;
+  }
+  .card:hover .card-overlay{opacity:1}
 
   .counter{
     position:absolute;
-    top:8px;
-    right:8px;
-    width:30px;
-    height:30px;
+    top:10px;
+    right:10px;
+    width:32px;
+    height:32px;
     border-radius:50%;
     background:rgba(124,92,255,.85);
     display:flex;
@@ -155,6 +206,7 @@
     justify-content:center;
     font-weight:700;
     transition: transform 0.2s, background 0.2s;
+    z-index:3;
   }
   .counter.animate {
     transform: scale(1.5);
@@ -164,63 +216,67 @@
   .footer-note{
     color:#9aa3b2;
     text-align:center;
-    padding:18px 12px 36px;
-    font-size:0.95rem;
-  }
-
-  .theme-toggle {
-    position:fixed;
-    top:20px;
-    left:20px;
-    background:var(--accent);
-    color:#fff;
-    border:none;
-    padding:8px 12px;
-    border-radius:8px;
-    cursor:pointer;
-    z-index:1000;
+    padding:24px 12px 48px;
+    font-size:1rem;
   }
 
   @media(max-width:768px){
     .card-grid {
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      padding: 16px;
+      gap:12px;
     }
   }
-
 </style>
 </head>
 <body>
 
 <button class="theme-toggle" id="themeToggle">🌙</button>
-<header>Couch Potato Schoolz</header>
 
-<button id="toggleBtn" class="search-toggle" aria-expanded="false">Search</button>
+<header>
+  Couch Potato Schoolz
+  <h2>Your hub for epic browser games!</h2>
+</header>
+
+<button id="toggleBtn" class="search-toggle" aria-expanded="false">Search Games</button>
 <div id="searchContainer" class="search-container" aria-hidden="true">
-  <input id="searchInput" type="text" placeholder="Type to search (hidden names)" aria-label="Search cards">
+  <input id="searchInput" type="text" placeholder="Type to search" aria-label="Search cards">
 </div>
 
 <main>
   <div class="card-grid" id="cardGrid">
-    <div class="card" data-name="geometrydashleveleditor" data-view="geometrydashleveleditor"><img loading="lazy" src="assets/geometrydashleveleditor.png" alt="Geometry Dash Level Editor"><div class="counter">0</div></div>
-    <div class="card" data-name="arc" data-view="arc"><img loading="lazy" src="assets/Arc.png" alt="Arc"><div class="counter">0</div></div>
-    <div class="card" data-name="greenfeildinfinite" data-view="greenfeildinfinite"><img loading="lazy" src="assets/greenfeildinfinte.png" alt="Green Feild Infinite"><div class="counter">0</div></div>
-    <div class="card" data-name="callofbattle" data-view="callofbattle"><img loading="lazy" src="https://picsum.photos/seed/city/800/800" alt="Call of Battle"><div class="counter">0</div></div>
+    <div class="card" data-name="geometrydashleveleditor" data-view="geometrydashleveleditor">
+      <img loading="lazy" src="assets/geometrydashleveleditor.png" alt="Geometry Dash Level Editor">
+      <div class="card-overlay">Geometry Dash Level Editor</div>
+      <div class="counter">0</div>
+    </div>
+    <div class="card" data-name="arc" data-view="arc">
+      <img loading="lazy" src="assets/Arc.png" alt="Arc">
+      <div class="card-overlay">Arc</div>
+      <div class="counter">0</div>
+    </div>
+    <div class="card" data-name="greenfeildinfinite" data-view="greenfeildinfinite">
+      <img loading="lazy" src="assets/greenfeildinfinte.png" alt="Green Feild Infinite">
+      <div class="card-overlay">Green Feild Infinite</div>
+      <div class="counter">0</div>
+    </div>
+    <div class="card" data-name="callofbattle" data-view="callofbattle">
+      <img loading="lazy" src="https://picsum.photos/seed/city/800/800" alt="Call of Battle">
+      <div class="card-overlay">Call of Battle</div>
+      <div class="counter">0</div>
+    </div>
   </div>
 </main>
 
-<div class="footer-note">Click a square to open its viewer in a new about:blank tab (viewer loads inside an iframe).</div>
+<div class="footer-note">
+  Click a square to open its viewer in a new tab.
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-/* Theme Toggle */
 const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click',()=>{
-  document.body.classList.toggle('dark-theme');
-});
+themeToggle.addEventListener('click',()=>document.body.classList.toggle('dark-theme'));
 
-/* Search Logic */
 const toggleBtn=document.getElementById('toggleBtn');
 const searchContainer=document.getElementById('searchContainer');
 const searchInput=document.getElementById('searchInput');
@@ -244,7 +300,6 @@ function applyFilter(term){
   });
 }
 
-/* Card Counters & Viewer */
 cards.forEach(card=>{
   const name=card.dataset.name;
   const counterEl=card.querySelector('.counter');
@@ -266,28 +321,19 @@ cards.forEach(card=>{
   });
 });
 
-/* Card 3D Tilt Effect */
+/* 3D tilt effect */
 cards.forEach(card=>{
   card.addEventListener('mousemove', e=>{
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width/2;
     const y = e.clientY - rect.top - rect.height/2;
-    card.style.transform = `rotateY(${x*0.05}deg) rotateX(${-y*0.05}deg) scale(1.02)`;
+    card.style.transform = `rotateY(${x*0.05}deg) rotateX(${-y*0.05}deg) scale(1.05)`;
   });
-  card.addEventListener('mouseleave', ()=>card.style.transform='translateY(-6px) scale(1.02)');
+  card.addEventListener('mouseleave', ()=>card.style.transform='translateY(-8px) scale(1.05)');
 });
 
-/* GSAP Animations */
-gsap.registerPlugin(ScrollTrigger);
-gsap.from('.card', {
-  opacity:0,
-  y:50,
-  stagger:0.1,
-  duration:1,
-  ease:'power3.out'
-});
-
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+/* GSAP Fade-in */
+gsap.from('.card', {opacity:0,y:50,stagger:0.1,duration:1,ease:'power3.out'});
 </script>
 </body>
 </html>
