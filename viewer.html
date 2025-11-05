@@ -3,198 +3,168 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Viewer</title>
+<title>Game Viewer</title>
 <style>
   :root {
-  --bg: #0e0f12; /* Keep a fallback color */
-  --panel: #18191c;
-  --accent: #7c5cff;
-}
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-html, body {
-  height: 100%;
-  /* Set the background image and its properties */
-  background: var(--bg) url('assets/CPSBackgroundImg.png') no-repeat center center fixed;
-  background-size: cover;
-  color: #fff;
-  font-family: Inter, system-ui, sans-serif;
-  overflow: hidden;
-}
+    --bg: #0e0f12;
+    --panel: #18191c;
+    --accent: #7c5cff;
+    --hover: #2b2c31;
+    --text: #fff;
+    --shadow: rgba(0,0,0,0.6);
+  }
 
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html, body { height:100%; font-family: Inter, system-ui, sans-serif; overflow:hidden; background: var(--bg) url('assets/CPSBackgroundImg.png') no-repeat center center fixed; background-size: cover; color: var(--text); transition: all 0.3s ease; }
 
-  .layout { display: flex; height: 100%; width: 100%; position: relative; }
+  body.light-theme {
+    --bg: #f0f0f0;
+    --panel: #fff;
+    --accent: #7c5cff;
+    --hover: #e0e0e0;
+    --text: #111;
+    --shadow: rgba(0,0,0,0.25);
+    background-color: var(--bg);
+  }
+
+  .layout { display:flex; height:100%; width:100%; position:relative; }
 
   /* Sidebar */
   .sidebar {
     width: 80px;
     background: var(--panel);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 12px 0;
-    gap: 14px;
-    box-shadow: 4px 0 12px rgba(0,0,0,0.3);
-    /* Remove the old transition: transform 0.3s ease; */
-    z-index: 2;
-    transform: translateX(-100%); /* Start hidden by default */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:12px 0;
+    gap:16px;
+    box-shadow: 4px 0 20px var(--shadow);
+    z-index:2;
+    transform: translateX(-100%);
   }
 
-  /* Keyframe animations for the bounce effect */
-  @keyframes slideInBounce {
-    0% { transform: translateX(-100%); }
-    70% { transform: translateX(5%); } /* Overshoot by 5% of its width */
-    100% { transform: translateX(0); } /* Final position */
-  }
+  @keyframes slideInBounce { 0%{transform:translateX(-100%);}70%{transform:translateX(5%);}100%{transform:translateX(0);} }
+  @keyframes slideOutBounce { 0%{transform:translateX(0);}30%{transform:translateX(-5%);}100%{transform:translateX(-100%);} }
 
-  @keyframes slideOutBounce {
-    0% { transform: translateX(0); }
-    30% { transform: translateX(-5%); } /* Slight initial push */
-    100% { transform: translateX(-100%); } /* Final hidden position */
-  }
-
-  /* Classes to apply the animations */
-  .sidebar.open-animate {
-    animation: slideInBounce 0.5s forwards ease-out;
-  }
-  .sidebar.close-animate {
-    animation: slideOutBounce 0.4s forwards ease-in;
-  }
+  .sidebar.open-animate { animation: slideInBounce 0.5s forwards ease-out; }
+  .sidebar.close-animate { animation: slideOutBounce 0.4s forwards ease-in; }
 
   /* Toggle button */
   .toggle-btn {
-    position: absolute;
-    top: 12px;
-    left: 12px;
+    position:absolute;
+    top:16px;
+    left:16px;
     background: var(--accent);
     color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    padding: 8px 14px;
-    cursor: pointer;
-    z-index: 3;
-    transition: transform 0.3s ease;
-    font-size: 1.2rem;
+    border:none;
+    border-radius:12px;
+    padding:10px 16px;
+    cursor:pointer;
+    font-weight:700;
+    z-index:3;
+    transition: transform 0.3s ease, background 0.2s;
+    box-shadow:0 4px 12px var(--shadow);
+    font-size:1.2rem;
   }
   .toggle-btn.open { transform: translateX(100px); }
 
-  .side-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
-    background: #1f2024;
-    border: 2px solid transparent;
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    transition: 0.2s;
+  .theme-toggle {
+    position:absolute;
+    top:16px;
+    right:16px;
+    background: var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    padding:10px 16px;
+    cursor:pointer;
+    font-weight:700;
+    box-shadow:0 4px 12px var(--shadow);
   }
-  .side-btn:hover { transform: scale(1.05); border-color: var(--accent); }
-  .side-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+  .side-btn {
+    width:60px; height:60px; border-radius:14px;
+    background: var(--hover); border:2px solid transparent; cursor:pointer; overflow:hidden;
+    position:relative; transition:0.25s; box-shadow: 0 4px 12px var(--shadow);
+  }
+  .side-btn:hover { transform: scale(1.1); border-color: var(--accent); box-shadow:0 6px 18px var(--shadow);}
+  .side-btn img { width:100%; height:100%; object-fit:cover; }
 
   .counter {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
+    position:absolute; top:4px; right:4px;
+    width:22px; height:22px; border-radius:50%;
     background: var(--accent);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #fff;
+    display:flex; justify-content:center; align-items:center;
+    font-size:0.75rem; font-weight:600; color:#fff;
+    transition: transform 0.2s, background 0.2s;
   }
+  .counter.animate { transform:scale(1.5); background:#ff61e2; }
 
   .back {
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
-    background: #2b2c31;
-    border: 2px solid #444;
-    color: #fff;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
+    width:60px; height:60px; border-radius:14px;
+    background: #2b2c31; border:2px solid #444; color:#fff;
+    font-weight:700; cursor:pointer; display:flex;
+    align-items:center; justify-content:center;
+    transition:0.2s; box-shadow: 0 4px 12px var(--shadow);
   }
-  .back:hover { background: #35363d; border-color: var(--accent); }
+  .back:hover { background:#35363d; border-color:var(--accent); }
 
+  /* Main content */
   .main {
-  flex: 1;
-  position: relative;
-  background: radial-gradient(circle at top left, #0e0f12, #0a0a0c);
-  padding: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-iframe {
-  width: 100%;
-  height: 100%;
-  max-width: 1200px;
-  max-height: 800px;
-  border: none;
-  border-radius: 20px;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
-  background: #101012;
-}
-
-  .titlebar {
-    position: absolute;
-    top: 12px;
-    left: 100px;
-    /* right: 20px;  Removed this to allow controls on the right */
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #ccc;
-    font-weight: 600;
-    /* pointer-events: none; Removed this to allow clicks on buttons */
+    flex:1;
+    position:relative;
+    background: radial-gradient(circle at top left, var(--bg), #0a0a0c);
+    padding:40px;
+    display:flex; justify-content:center; align-items:center;
+    overflow:hidden;
   }
 
+  iframe {
+    width:100%; height:100%; max-width:1200px; max-height:800px;
+    border:none; border-radius:20px;
+    box-shadow:0 0 25px var(--shadow);
+    background:#101012;
+    opacity:0;
+    transition: opacity 0.5s ease;
+  }
+  iframe.loaded { opacity:1; }
+
+  /* Titlebar & controls */
+  .titlebar {
+    position:absolute; top:16px; left:100px;
+    display:flex; align-items:center; justify-content:space-between;
+    font-weight:600; color: var(--text);
+    text-shadow:0 0 6px var(--accent);
+  }
   .controls {
-    position: absolute;
-    top: 12px;
-    right: 20px;
-    display: flex;
-    gap: 10px;
+    position:absolute; top:16px; right:16px;
+    display:flex; gap:10px;
   }
   .control-btn {
     background: var(--panel);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 8px 14px;
-    cursor: pointer;
-    font-weight: bold;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    color: var(--text);
+    border:none; border-radius:10px;
+    padding:8px 14px;
+    cursor:pointer; font-weight:bold;
+    box-shadow:0 3px 10px var(--shadow);
+    transition:0.2s;
   }
-  .control-btn:hover { background: #2b2c31; }
+  .control-btn:hover { background: var(--hover); transform:scale(1.05); }
 
-  @media (max-width: 700px) {
-    .sidebar { width: 65px; }
-    .side-btn, .back { width: 50px; height: 50px; }
-    .titlebar { left: 85px; font-size: 0.9rem; }
-    .controls { right: 12px; gap: 8px; }
-    .control-btn { padding: 6px 10px; }
+  /* Responsive */
+  @media(max-width:700px){
+    .sidebar { width:65px; }
+    .side-btn, .back { width:50px; height:50px; }
+    .titlebar { left:80px; font-size:0.9rem; }
+    .controls { right:12px; gap:8px; }
+    .control-btn { padding:6px 10px; }
   }
 </style>
-
 </head>
 <body>
 
 <button class="toggle-btn" id="toggleSidebar">☰</button>
+<button class="theme-toggle" id="themeToggle">🌙</button>
 
 <div class="layout">
   <aside class="sidebar hidden" id="sidebar">
@@ -203,8 +173,8 @@ iframe {
   <main class="main">
     <div class="titlebar"><span id="title">Loading...</span></div>
     <div class="controls">
-        <button class="control-btn" id="reloadBtn" title="Reload iframe">⟳</button>
-        <button class="control-btn" id="fullscreenBtn" title="Toggle Fullscreen"> maximise</button>
+      <button class="control-btn" id="reloadBtn" title="Reload iframe">⟳</button>
+      <button class="control-btn" id="fullscreenBtn" title="Toggle Fullscreen">maximize</button>
     </div>
     <iframe id="contentFrame" src="about:blank"></iframe>
   </main>
@@ -219,8 +189,8 @@ const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('toggleSidebar');
 const reloadBtn = document.getElementById('reloadBtn');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
+const themeToggle = document.getElementById('themeToggle');
 
-// Map from view keys to URLs
 const map = {
   geometrydashleveleditor: 'https://blockersgotbugsfr.github.io/CouchPotatoSchoolz/buttons/3DashLevelEditor.html',
   arc: 'https://blockersgotbugsfr.github.io/CouchPotatoSchoolz/buttons/ARC.html',
@@ -228,111 +198,57 @@ const map = {
   callofbattle: 'https://blockersgotbugsfr.github.io/CallOfBattle.html/'
 };
 
-// Load initial iframe content
-loadView(view);
-
-// Build side buttons dynamically with counters
-for (const [key, url] of Object.entries(map)) {
+// Build sidebar buttons
+for(const [key,url] of Object.entries(map)){
   const btn = document.createElement('div');
-  btn.className = 'side-btn';
-  btn.title = capitalize(key);
-  btn.innerHTML = `
-    <img src="https://picsum.photos/seed/${key}/100/100" alt="${key}">
-    <div class="counter" id="counter-${key}">${getCounter(key)}</div>
-  `;
-  btn.onclick = () => {
-    incrementCounter(key);
-    loadView(key);
-  };
+  btn.className='side-btn';
+  btn.title=capitalize(key);
+  btn.innerHTML = `<img src="https://picsum.photos/seed/${key}/100/100" alt="${key}"><div class="counter" id="counter-${key}">${getCounter(key)}</div>`;
+  btn.onclick = ()=>{ incrementCounter(key); loadView(key); animateCounter(key); };
   sidebar.appendChild(btn);
 }
 
 // Functions
-function loadView(key) {
+function loadView(key){
   view = key;
   titleEl.textContent = capitalize(key);
+  frame.classList.remove('loaded');
   frame.src = map[key] || 'about:blank';
-  updateAllCounters();
 }
+frame.onload = ()=>frame.classList.add('loaded');
 
 function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function getCounter(name){ return parseInt(localStorage.getItem('count:' + name) || '0'); }
+function incrementCounter(name){ localStorage.setItem('count:' + name,getCounter(name)+1); updateAllCounters(); }
+function updateAllCounters(){ for(const key of Object.keys(map)){ const el=document.getElementById('counter-'+key); if(el) el.textContent=getCounter(key); } }
+function animateCounter(name){ const el=document.getElementById('counter-'+name); if(el){ el.classList.add('animate'); setTimeout(()=>el.classList.remove('animate'),300); } }
 
-function getCounter(name){
-  return parseInt(localStorage.getItem('count:' + name) || '0');
-}
-
-function incrementCounter(name){
-  const count = getCounter(name) + 1;
-  localStorage.setItem('count:' + name, count);
-  return count;
-}
-
-function updateAllCounters(){
-  for(const key of Object.keys(map)){
-    const el = document.getElementById('counter-' + key);
-    if(el) el.textContent = getCounter(key);
-  }
-}
-
-// Toggle sidebar
-let isSidebarOpen = false;
-
-toggleBtn.onclick = () => {
-  if (isSidebarOpen) {
-    // Closing: Add close animation class, remove open
-    sidebar.classList.add('close-animate');
-    sidebar.classList.remove('open-animate');
-    toggleBtn.classList.remove('open');
-    isSidebarOpen = false;
-  } else {
-    // Opening: Add open animation class, remove close
-    sidebar.classList.add('open-animate');
-    sidebar.classList.remove('close-animate');
-    toggleBtn.classList.add('open');
-    isSidebarOpen = true;
-  }
+// Sidebar toggle
+let isSidebarOpen=false;
+toggleBtn.onclick = ()=>{
+  if(isSidebarOpen){ sidebar.classList.add('close-animate'); sidebar.classList.remove('open-animate'); toggleBtn.classList.remove('open'); isSidebarOpen=false; }
+  else { sidebar.classList.add('open-animate'); sidebar.classList.remove('close-animate'); toggleBtn.classList.add('open'); isSidebarOpen=true; }
 };
 
 // Back button
-document.getElementById('backBtn').onclick = () => {
-  if(window.opener && !window.opener.closed){
-    window.close(); // close the viewer tab
-  } else {
-    location.href = 'index.html';
-  }
+document.getElementById('backBtn').onclick = ()=>{
+  if(window.opener && !window.opener.closed){ window.close(); } else { location.href='index.html'; }
 };
 
-// Reload button functionality
-reloadBtn.onclick = () => {
-  frame.src = frame.src; // Reloads the current source
-};
+// Reload button
+reloadBtn.onclick = ()=>{ frame.src = frame.src; };
 
-// Fullscreen button functionality (cross-browser)
-fullscreenBtn.onclick = () => {
-  if (document.fullscreenElement) {
-    // If in fullscreen, exit
-    if (document.exitFullscreen) document.exitFullscreen();
-    else if (document.mozCancelFullScreen) document.mozCancelFullScreen(); // Firefox
-    else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); // Chrome, Safari and Opera
-    else if (document.msExitFullscreen) document.msExitFullscreen(); // IE/Edge
-  } else {
-    // If not in fullscreen, request it for the main container
-    const mainEl = document.querySelector('.main');
-    if (mainEl.requestFullscreen) mainEl.requestFullscreen();
-    else if (mainEl.mozRequestFullScreen) mainEl.mozRequestFullScreen(); // Firefox
-    else if (mainEl.webkitRequestFullscreen) mainEl.webkitRequestFullscreen(); // Chrome, Safari and Opera
-    else if (mainEl.msRequestFullscreen) mainEl.msRequestFullscreen(); // IE/Edge
-  }
+// Fullscreen button
+fullscreenBtn.onclick = ()=>{
+  const mainEl = document.querySelector('.main');
+  if(document.fullscreenElement){ document.exitFullscreen?.(); } 
+  else { mainEl.requestFullscreen?.(); }
 };
+document.addEventListener('fullscreenchange', ()=>{ fullscreenBtn.textContent = document.fullscreenElement ? 'minimise' : 'maximize'; });
 
-// Update the fullscreen button text/icon when fullscreen state changes
-document.addEventListener('fullscreenchange', () => {
-    if (document.fullscreenElement) {
-        fullscreenBtn.textContent = ' minimise';
-    } else {
-        fullscreenBtn.textContent = ' maximise';
-    }
-});
+// Theme toggle
+themeToggle.onclick = ()=>{ document.body.classList.toggle('light-theme'); };
 </script>
+
 </body>
 </html>
