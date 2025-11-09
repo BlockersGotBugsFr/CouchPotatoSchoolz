@@ -146,6 +146,27 @@
     transition: transform .25s;
   }
 
+
+  .card-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    opacity:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+    font-weight:700;
+    font-size:1.1rem;
+    text-align:center;
+    padding:12px;
+    transition:opacity 0.3s;
+    z-index:2;
+    border-radius:16px;
+  }
+  .card:hover .card-overlay{opacity:1}
+
+  
   .card::before{
     content:'';
     position:absolute;
