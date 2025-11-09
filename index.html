@@ -5,141 +5,155 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Couch Potato Schoolz</title>
 <style>
-  :root{
-    --bg1:#0d0f12;
-    --bg2:#1b1d22;
-    --card:#181a1e;
-    --accent:#6c63ff;
-    --accent-hover:#847dff;
+  :root {
+    --bg:#0e0f12;
+    --panel:#1a1b1e;
+    --accent:#7c5cff;
+    --accent-hover:#9d7aff;
     --text:#f5f5f5;
   }
 
-  *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;}
+  * { box-sizing:border-box; margin:0; padding:0; }
 
-  body{
-    background:linear-gradient(120deg,var(--bg1),var(--bg2));
-    color:var(--text);
+  body {
     min-height:100vh;
-    background-size:300% 300%;
-    animation:bgShift 30s ease infinite;
+    background:linear-gradient(45deg,#0e0f12,#1a1b1e,#0e0f12,#1f2024);
+    background-size:400% 400%;
+    animation:pan 40s ease infinite;
+    font-family:Inter,system-ui,Arial;
+    color:var(--text);
     overflow-x:hidden;
   }
 
-  @keyframes bgShift{
-    0%{background-position:0% 50%;}
-    50%{background-position:100% 50%;}
-    100%{background-position:0% 50%;}
+  @keyframes pan {
+    0% { background-position:0 0; }
+    100% { background-position:100% 100%; }
   }
 
-  header{
+  header {
     text-align:center;
-    padding:80px 20px 40px;
+    padding:80px 20px 50px;
+    position:relative;
   }
 
-  header h1{
-    font-size:2.8rem;
-    font-weight:800;
-    background:linear-gradient(90deg,#8a7dff,#58b8ff);
+  header h1 {
+    font-size:3rem;
+    font-weight:900;
+    color:#fff;
+    background:linear-gradient(90deg,var(--accent),#a47cff);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
   }
 
-  header p{
-    color:#9ca3af;
+  header p {
+    color:#aaa;
+    font-size:1.15rem;
     margin-top:10px;
-    font-size:1.1rem;
   }
 
-  .search{
-    display:flex;
-    justify-content:center;
-    margin:40px 0 60px;
+  .search-bar {
+    margin:40px auto 60px;
+    text-align:center;
   }
 
-  .search input{
+  .search-bar input {
     width:60%;
     max-width:520px;
     padding:12px 16px;
-    border-radius:12px;
     border:none;
-    background:rgba(255,255,255,0.1);
-    backdrop-filter:blur(10px);
-    color:#fff;
+    border-radius:12px;
     font-size:1rem;
-    transition:0.3s;
+    background:#1f1f23;
+    color:#fff;
+    box-shadow:0 4px 15px rgba(0,0,0,0.35);
+    transition:0.25s;
   }
 
-  .search input:focus{
-    outline:2px solid var(--accent);
-    background:rgba(255,255,255,0.15);
+  .search-bar input:focus {
+    outline:none;
+    transform:scale(1.03);
+    box-shadow:0 0 12px var(--accent);
   }
 
-  main{
+  main {
     max-width:1200px;
     margin:0 auto;
-    padding:0 20px 100px;
+    padding:0 20px 80px;
   }
 
-  .card-grid{
+  .card-grid {
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-    gap:28px;
-  }
-
-  .card{
-    position:relative;
-    border-radius:16px;
-    overflow:hidden;
-    background:var(--card);
-    box-shadow:0 6px 20px rgba(0,0,0,0.4);
-    cursor:pointer;
-    transition:transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .card:hover{
-    transform:translateY(-8px) scale(1.03);
-    box-shadow:0 12px 40px rgba(108,99,255,0.4);
-  }
-
-  .card img{
-    width:100%;
-    height:180px;
-    object-fit:cover;
-    display:block;
-  }
-
-  .card-info{
-    padding:16px;
-    text-align:center;
-  }
-
-  .card-info h3{
-    font-size:1.1rem;
-    font-weight:700;
-    margin-bottom:6px;
-    color:#fff;
-  }
-
-  .card-info p{
-    font-size:0.9rem;
-    color:#b5b8c3;
-  }
-
-  footer{
-    text-align:center;
-    color:#80858f;
-    font-size:0.9rem;
-    padding:30px 20px 50px;
-  }
-
-  /* Smooth fade-in animation for cards */
-  @keyframes fadeUp {
-    from {opacity:0; transform:translateY(30px);}
-    to {opacity:1; transform:translateY(0);}
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:26px;
   }
 
   .card {
-    animation:fadeUp 0.6s ease forwards;
+    background:var(--panel);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(0,0,0,0.45);
+    cursor:pointer;
+    transition:transform 0.3s ease, box-shadow 0.3s ease;
+    position:relative;
+  }
+
+  .card::before {
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,var(--accent),#b47cff);
+    opacity:0;
+    transition:opacity 0.4s;
+    z-index:0;
+  }
+
+  .card:hover::before { opacity:0.15; }
+
+  .card:hover {
+    transform:translateY(-10px) scale(1.04);
+    box-shadow:0 16px 45px rgba(0,0,0,0.7);
+  }
+
+  .card img {
+    width:100%;
+    height:200px;
+    object-fit:cover;
+    display:block;
+    transition:transform 0.3s ease;
+  }
+
+  .card:hover img { transform:scale(1.08); }
+
+  .card-content {
+    position:relative;
+    z-index:1;
+    padding:18px;
+    text-align:center;
+  }
+
+  .card-content h3 {
+    font-size:1.2rem;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:6px;
+  }
+
+  .card-content p {
+    font-size:0.95rem;
+    color:#b9b9b9;
+  }
+
+  footer {
+    text-align:center;
+    color:#888;
+    padding:40px 20px;
+    border-top:1px solid rgba(255,255,255,0.08);
+    font-size:0.95rem;
+  }
+
+  @media(max-width:650px) {
+    header h1 { font-size:2.3rem; }
+    .search-bar input { width:80%; }
   }
 </style>
 </head>
@@ -147,69 +161,90 @@
 
 <header>
   <h1>Couch Potato Schoolz</h1>
-  <p>Access your spaces and creations</p>
+  <p>Relax, explore, and play your favorites all in one place.</p>
 </header>
 
-<div class="search">
-  <input id="searchInput" type="text" placeholder="Search...">
+<div class="search-bar">
+  <input id="searchInput" type="text" placeholder="Search for something...">
 </div>
 
 <main>
   <div class="card-grid" id="cardGrid">
     <div class="card" data-name="geometrydashleveleditor">
       <img src="assets/geometrydashleveleditor.png" alt="Geometry Dash Level Editor">
-      <div class="card-info">
-        <h3>Geometry Editor</h3>
-        <p>Custom design environment</p>
+      <div class="card-content">
+        <h3>Geometry Dash Level Editor</h3>
+        <p>Create and test your own levels.</p>
       </div>
     </div>
 
     <div class="card" data-name="arc">
-      <img src="assets/Arc.png" alt="Arc">
-      <div class="card-info">
+      <img src="assets/Arc.png" alt="Arc Game">
+      <div class="card-content">
         <h3>Arc</h3>
-        <p>Visual sequence simulator</p>
+        <p>Fast, simple, endless fun.</p>
       </div>
     </div>
 
     <div class="card" data-name="greenfeildinfinite">
       <img src="assets/greenfeildinfinite.png" alt="Green Feild Infinite">
-      <div class="card-info">
-        <h3>Green Field</h3>
-        <p>Endless environment project</p>
+      <div class="card-content">
+        <h3>Green Feild Infinite</h3>
+        <p>Explore and build freely.</p>
       </div>
     </div>
 
-    <div class="card" data-name="EaglerCraft">
-      <img src="https://picsum.photos/seed/city/800/800" alt="EaglerCraft">
-      <div class="card-info">
-        <h3>Eagler</h3>
-        <p>Creative sandbox setup</p>
+    <div class="card" data-name="eaglercraft">
+      <img src="https://picsum.photos/seed/pixel/800/800" alt="EaglerCraft">
+      <div class="card-content">
+        <h3>EaglerCraft</h3>
+        <p>Survive and create your own world.</p>
       </div>
     </div>
   </div>
 </main>
 
 <footer>
-  © 2025 Couch Potato Schoolz — Dashboard Interface
+  © 2025 Couch Potato Schoolz — All rights reserved.
 </footer>
 
 <script>
-const searchInput=document.getElementById('searchInput');
-const cards=Array.from(document.querySelectorAll('.card'));
+const searchInput = document.getElementById('searchInput');
+const cards = Array.from(document.querySelectorAll('.card'));
 
-searchInput.addEventListener('input',()=>{
-  const term=searchInput.value.trim().toLowerCase();
-  cards.forEach(card=>{
-    const name=(card.dataset.name||'').toLowerCase();
-    card.style.display=name.includes(term)?'':'none';
+searchInput.addEventListener('input', () => {
+  const term = searchInput.value.trim().toLowerCase();
+  cards.forEach(card => {
+    const name = (card.dataset.name || '').toLowerCase();
+    card.style.display = name.includes(term) ? '' : 'none';
   });
 });
 
-cards.forEach(card=>{
-  card.addEventListener('click',()=>{
-    const name=card.dataset.name;
-    window.open('viewer.html?view='+encodeURIComponent(name),'_blank');
+// keep safe tab open
+cards.forEach(card => {
+  card.addEventListener('click', () => {
+    const name = card.dataset.name;
+    const newTab = window.open('', '_blank');
+    if (!newTab) { alert('Popup blocked'); return; }
+    const html = `
+      <!doctype html>
+      <html>
+      <head>
+        <meta charset='utf-8'>
+        <meta name='viewport' content='width=device-width,initial-scale=1'>
+        <title>${name}</title>
+        <style>
+          html,body{height:100%;margin:0;background:#0e0f12;color:#fff;font-family:Inter,Arial,sans-serif;overflow:hidden}
+          iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#000}
+        </style>
+      </head>
+      <body>
+        <iframe src='viewer.html?view=${encodeURIComponent(name)}'></iframe>
+      </body>
+      </html>`;
+    newTab.document.open();
+    newTab.document.write(html);
+    newTab.document.close();
   });
 });
 </script>
