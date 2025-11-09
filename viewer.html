@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -153,14 +153,12 @@ iframe {
     position: absolute;
     top: 12px;
     left: 100px;
-    /* right: 20px;  Removed this to allow controls on the right */
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: #ccc;
     font-weight: 600;
-    /* pointer-events: none; Removed this to allow clicks on buttons */
   }
 
   .controls {
@@ -189,6 +187,30 @@ iframe {
     .controls { right: 12px; gap: 8px; }
     .control-btn { padding: 6px 10px; }
   }
+
+  /* New CSS for the Eaglercraft info box */
+  .eaglercraft-info {
+    display: none; /* Hidden by default */
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 0.9rem;
+    text-align: center;
+    z-index: 10;
+    max-width: 400px;
+  }
+
+  /* Class to make the info box visible */
+  .eaglercraft-info.visible {
+    display: block;
+  }
+
 </style>
 
 </head>
@@ -207,6 +229,10 @@ iframe {
         <button class="control-btn" id="fullscreenBtn" title="Toggle Fullscreen"> maximise</button>
     </div>
     <iframe id="contentFrame" src="about:blank"></iframe>
+    <!-- The new Eaglercraft info box -->
+    <div class="eaglercraft-info" id="eaglercraftInfoBox">
+        You may need to enable "Insecure content" in your browser settings for Eaglercraft to load.
+    </div>
   </main>
 </div>
 
@@ -219,6 +245,8 @@ const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('toggleSidebar');
 const reloadBtn = document.getElementById('reloadBtn');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
+// Get the new text box element
+const eaglercraftInfoBox = document.getElementById('eaglercraftInfoBox');
 
 // Map from view keys to URLs
 const map = {
@@ -253,6 +281,13 @@ function loadView(key) {
   titleEl.textContent = capitalize(key);
   frame.src = map[key] || 'about:blank';
   updateAllCounters();
+
+  // New logic: Show or hide the info box based on the 'key'
+  if (key === 'EaglerCraft') {
+    eaglercraftInfoBox.classList.add('visible');
+  } else {
+    eaglercraftInfoBox.classList.remove('visible');
+  }
 }
 
 function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
@@ -334,5 +369,7 @@ document.addEventListener('fullscreenchange', () => {
     }
 });
 </script>
+
+
 </body>
 </html>
