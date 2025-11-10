@@ -211,6 +211,37 @@ iframe {
     display: block;
   }
 
+  /* Add to your existing CSS file/style tags */
+
+.eaglercraft-info {
+  /* ... any existing styles for the box itself ... */
+  display: none; /* Hidden by default by JS, but good to have a default */
+}
+
+.eaglercraft-info.visible {
+  display: block; /* Shown when EaglerCraft is selected */
+}
+
+.info-toggle-btn {
+  /* Style your toggle button as needed (e.g., small, near the text) */
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 16px;
+  float: right; /* Positions the button to the right */
+}
+
+.info-content {
+  /* This is the content that gets toggled */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out; /* Smooth transition for dropdown effect */
+}
+
+.info-content.open {
+  max-height: 200px; /* Set a height large enough to fit your content when open */
+}
+
 </style>
 
 </head>
