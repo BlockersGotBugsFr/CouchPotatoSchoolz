@@ -230,10 +230,15 @@ iframe {
     </div>
     <iframe id="contentFrame" src="about:blank"></iframe>
     <!-- The new Eaglercraft info box -->
-    <div class="eaglercraft-info" id="eaglercraftInfoBox">
-        Hello if this is down right now here is the reason why 
+    <!-- The new Eaglercraft info box -->
+<div class="eaglercraft-info" id="eaglercraftInfoBox">
+    <button id="toggleInfoBox" class="info-toggle-btn">▼</button>
+    <div class="info-content" id="eaglercraftInfoContent">
+      Hello if this is down right now here is the reason why 
       this is my server url so when i open the server you can play this otherwise it doesnt work i can also say how to make your own server later if anyone wants to make a server for them selfs
     </div>
+</div>
+
   </main>
 </div>
 
@@ -370,6 +375,55 @@ document.addEventListener('fullscreenchange', () => {
         fullscreenBtn.textContent = ' maximise';
     }
 });
+
+  // ... existing JavaScript ...
+
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+// Get the new text box element
+const eaglercraftInfoBox = document.getElementById('eaglercraftInfoBox');
+// Get the content and toggle button for the info box
+const eaglercraftInfoContent = document.getElementById('eaglercraftInfoContent');
+const toggleInfoBoxBtn = document.getElementById('toggleInfoBox');
+
+// Map from view keys to URLs
+// ... existing map ...
+
+// Load initial iframe content
+loadView(view);
+
+// ... existing loop for building side buttons ...
+
+// Functions
+function loadView(key) {
+  view = key;
+  titleEl.textContent = capitalize(key);
+  frame.src = map[key] || 'about:blank';
+  updateAllCounters();
+
+  // New logic: Show or hide the info box based on the 'key'
+  if (key === 'EaglerCraft') {
+    eaglercraftInfoBox.classList.add('visible');
+  } else {
+    eaglercraftInfoBox.classList.remove('visible');
+    // Ensure content is hidden when switching away from EaglerCraft view
+    eaglercraftInfoContent.classList.remove('open');
+    toggleInfoBoxBtn.textContent = '▼';
+  }
+}
+
+// Function to toggle the visibility of the info box content
+toggleInfoBoxBtn.onclick = () => {
+  eaglercraftInfoContent.classList.toggle('open');
+  // Change the button text based on the state
+  if (eaglercraftInfoContent.classList.contains('open')) {
+    toggleInfoBoxBtn.textContent = '▲';
+  } else {
+    toggleInfoBoxBtn.textContent = '▼';
+  }
+};
+
+// ... the rest of the existing JavaScript ...
+
 </script>
 
 
