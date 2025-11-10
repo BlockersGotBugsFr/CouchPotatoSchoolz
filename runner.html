@@ -14,7 +14,7 @@
         .container {
             padding: 40px 20px;
             max-width: 900px;
-            margin: 30px auto; /* Add margin to the top */
+            margin: 30px auto;
             background-color: #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-radius: 8px;
@@ -48,16 +48,27 @@
         button:hover, .nav-button:hover {
             background-color: #0056b3;
         }
+        #iframe-wrapper {
+            position: relative;
+            margin-top: 20px;
+        }
         iframe {
             width: 100%;
             height: 600px;
             border: 1px solid #ccc;
-            margin-top: 20px;
             border-radius: 4px;
             background-color: #f9f9f9;
+            /* Add styles for fullscreen mode if needed, the API handles the sizing */
         }
         .nav-button {
             margin-bottom: 20px;
+        }
+        #fullscreenButton {
+            background-color: #28a745; /* Green color for fullscreen button */
+            margin-left: 10px;
+        }
+        #fullscreenButton:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -69,8 +80,12 @@
         
         <input type="text" id="urlInput" placeholder="Enter full URL (e.g., https://example.com)">
         <button onclick="loadIframe()">Load</button>
+        <button onclick="requestIframeFullscreen()" id="fullscreenButton">Fullscreen iFrame</button>
         
-        <iframe id="contentFrame" src="about:blank" title="Embedded Website"></iframe>
+        <div id="iframe-wrapper">
+            <!-- IMPORTANT: Add the allow="fullscreen" attribute -->
+            <iframe id="contentFrame" src="about:blank" title="Embedded Website" allow="fullscreen"></iframe>
+        </div>
     </div>
 
     <script>
@@ -86,6 +101,23 @@
                 iframe.src = url;
             } else {
                 alert("Please enter a URL.");
+            }
+        }
+
+        // Function to request fullscreen mode for the iframe
+        function requestIframeFullscreen() {
+            var iframe = document.getElementById('contentFrame');
+            // Check if the browser supports the fullscreen API and if the element can go fullscreen
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { /* Firefox */
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { /* IE/Edge */
+                iframe.msRequestFullscreen();
+            } else {
+                alert("Fullscreen API is not supported by this browser or feature is blocked by the embedded website's policy.");
             }
         }
 
