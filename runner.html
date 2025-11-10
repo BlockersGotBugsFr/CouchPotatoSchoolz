@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load URL in iFrame</title>
+    <style>
+        .container {
+            padding: 20px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+        }
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Load Website in iFrame</h2>
+        <p>Enter a URL and click "Load". Note: Many websites block embedding due to security policies.</p>
+        
+        <input type="text" id="urlInput" placeholder="Enter full URL (e.g., https://example.com)">
+        <button onclick="loadIframe()">Load</button>
+        
+        <iframe id="contentFrame" src="about:blank" title="Embedded Website"></iframe>
+    </div>
+
+    <script>
+        function loadIframe() {
+            // Get the value from the input box
+            var url = document.getElementById('urlInput').value;
+            
+            // Get the iframe element
+            var iframe = document.getElementById('contentFrame');
+            
+            // Set the src attribute of the iframe to the user-provided URL
+            if (url) {
+                iframe.src = url;
+            } else {
+                alert("Please enter a URL.");
+            }
+        }
+    </script>
+</body>
+</html>
