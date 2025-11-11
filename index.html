@@ -124,35 +124,30 @@
   margin: 0 auto;
 }
 
-/* Fix the standalone card */
 main .card:not(.card-grid .card) {
   max-width: 220px;
   margin: 20px auto;
 }
 
- .card {
+.card {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1/1;
   border-radius: 16px;
   overflow: hidden;
-  aspect-ratio: 1/1;
-  cursor: pointer;
   background: var(--panel);
-  transition: transform 0.25s, box-shadow 0.25s;
-  perspective: 1000px;
-  width: 100%; /* Ensure cards take full width in grid */
-  max-width: 220px; /* Match grid minmax size */
+  cursor: pointer;
+  transition: transform 0.25s ease;
 }
 
-  .card img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    border-radius:16px;
-    transition: transform .25s;
-  }
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
 
   .card-overlay{
@@ -309,6 +304,7 @@ main .card:not(.card-grid .card) {
       <div class="counter">0</div>
     </div>
   </div>
+  <img loading="lazy" src="your-image-url" alt="Description" class="loaded">
 </main>
 
 <div class="footer-note">
@@ -365,7 +361,6 @@ cards.forEach(card=>{
   });
 });
 
-/* 3D tilt effect */
 cards.forEach(card => {
   // Add transform-style to parent for proper 3D context
   card.style.transformStyle = 'preserve-3d';
