@@ -116,27 +116,35 @@
     padding:32px 20px 80px;
   }
 
-  .card-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:var(--gap);
-    max-width:1280px;
-    margin:0 auto;
-  }
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--gap);
+  max-width: 1280px;
+  margin: 0 auto;
+}
 
-  .card{
-    position:relative;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    border-radius:16px;
-    overflow:hidden;
-    aspect-ratio:1/1;
-    cursor:pointer;
-    background:var(--panel);
-    transition: transform .25s, box-shadow .25s;
-    perspective:1000px;
-  }
+/* Fix the standalone card */
+main .card:not(.card-grid .card) {
+  max-width: 220px;
+  margin: 20px auto;
+}
+
+ .card {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  background: var(--panel);
+  transition: transform 0.25s, box-shadow 0.25s;
+  perspective: 1000px;
+  width: 100%; /* Ensure cards take full width in grid */
+  max-width: 220px; /* Match grid minmax size */
+}
 
   .card img{
     width:100%;
@@ -358,14 +366,26 @@ cards.forEach(card=>{
 });
 
 /* 3D tilt effect */
-cards.forEach(card=>{
-  card.addEventListener('mousemove', e=>{
+cards.forEach(card => {
+  // Add transform-style to parent for proper 3D context
+  card.style.transformStyle = 'preserve-3d';
+  
+  card.addEventListener('mousemove', e => {
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width/2;
     const y = e.clientY - rect.top - rect.height/2;
-    card.style.transform = `rotateY(${x*0.05}deg) rotateX(${-y*0.05}deg) scale(1.05)`;
+    
+    // Use requestAnimationFrame for smoother animation
+    requestAnimationFrame(() => {
+      card.style.transform = `rotateY(${x*0.05}deg) rotateX(${-y*0.05}deg) scale(1.05)`;
+    });
   });
-  card.addEventListener('mouseleave', ()=>card.style.transform='translateY(-8px) scale(1.05)');
+  
+  card.addEventListener('mouseleave', () => {
+    requestAnimationFrame(() => {
+      card.style.transform = 'translateY(-8px) scale(1.05)';
+    });
+  });
 });
 
 /* GSAP Fade-in */
