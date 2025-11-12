@@ -5,12 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Couch Potato Schoolz</title>
 <style>
-  :root{
-    --bg:#0e0f12;
-    --panel:#151618;
-    --accent:#7c5cff;
-    --accent-hover:#945cff;
-    --gap:18px;
+  :root {
+    --bg: #0e0f12;
+    --panel: #18191d;
+    --accent: #7c5cff;
+    --accent-hover: #9b6cff;
+    --text: #f5f5f5;
+    --gap: 22px;
   }
 
   @keyframes background-pan {
@@ -18,447 +19,297 @@
     100% { background-position: 100% 100%; }
   }
 
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    min-height:100vh;
-    background:linear-gradient(45deg,#0e0f12,#151618,#0e0f12,#1c1d21);
-    background-size:400% 400%;
-    animation:background-pan 60s ease infinite;
-    color:#fff;
-    font-family:Inter,system-ui,Arial;
-    overflow-x:hidden;
-    transition: background-color 0.3s, color 0.3s;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(45deg, #0e0f12, #151618, #0e0f12, #1c1d21);
+    background-size: 400% 400%;
+    animation: background-pan 60s ease infinite;
+    color: var(--text);
+    font-family: 'Inter', system-ui, Arial, sans-serif;
+    overflow-x: hidden;
   }
 
-  body.dark-theme {
-    --bg: #f0f0f0;
-    --panel: #fff;
-    --accent: #7c5cff;
-    color: #111;
-    background-color: #f0f0f0;
+  header {
+    text-align: center;
+    padding: 50px 20px 30px;
+    background: linear-gradient(90deg, #1b1b1b, #222);
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
 
-  header{
-    padding:60px 20px 20px;
-    text-align:center;
-    font-size:3rem;
-    font-weight:900;
-    letter-spacing:1px;
-    background:linear-gradient(90deg,#1b1b1b,#262626);
-    color:#fff;
-    position:relative;
+  header h2 {
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-top: 6px;
   }
 
-  header h2{
-    font-weight:400;
-    font-size:1.2rem;
-    color:#aaa;
-    margin-top:6px;
+  .theme-toggle, .search-toggle, .sort-toggle {
+    background: var(--accent);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background 0.25s ease, transform 0.2s;
+  }
+
+  .theme-toggle:hover, .search-toggle:hover, .sort-toggle:hover {
+    background: var(--accent-hover);
+    transform: scale(1.05);
   }
 
   .theme-toggle {
-    position:fixed;
-    top:20px;
-    left:20px;
-    background:var(--accent);
-    color:#fff;
-    border:none;
-    padding:10px 16px;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:1.1rem;
-    z-index:1000;
-    transition: background .2s;
-  }
-  .theme-toggle:hover{background:var(--accent-hover)}
-
-  .search-toggle{
-    display:block;
-    margin:20px auto;
-    background:var(--accent);
-    border:none;
-    padding:12px 22px;
-    border-radius:12px;
-    color:#fff;
-    cursor:pointer;
-    font-weight:700;
-    font-size:1rem;
-    transition:background 0.3s;
-  }
-  .search-toggle:hover{background:var(--accent-hover)}
-
-  .search-container{
-    display:flex;
-    justify-content:center;
-    overflow:hidden;
-    height:0;
-    transition:height .28s;
-  }
-  .search-container.active{height:68px}
-  .search-container input{
-    width:60%;
-    max-width:520px;
-    margin-top:14px;
-    padding:12px 14px;
-    border-radius:12px;
-    border:0;
-    background:#1d1d1f;
-    color:#fff;
-    font-size:1rem;
-    box-shadow:0 4px 12px rgba(0,0,0,0.3);
-  }
-  body.dark-theme .search-container input{
-    background:#eee;
-    color:#111;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
   }
 
-  main{
-    padding:32px 20px 80px;
+  .controls {
+    text-align: center;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--gap);
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-main .card:not(.card-grid .card) {
-  max-width: 220px;
-  margin: 20px auto;
-}
-
-.card {
-  position: relative;
-  width: 100%;
-  max-width: 220px;
-  aspect-ratio: 1/1;
-  border-radius: 16px;
-  overflow: hidden;
-  background: var(--panel);
-  cursor: pointer;
-  transition: transform 0.25s ease;
-}
-
-.card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-
-  .card-overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,0.5);
-    opacity:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:#fff;
-    font-weight:700;
-    font-size:1.1rem;
-    text-align:center;
-    padding:12px;
-    transition:opacity 0.3s;
-    z-index:2;
-    border-radius:16px;
-  }
-  .card:hover .card-overlay{opacity:1}
-
-  
-  .card::before{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:linear-gradient(135deg,#ff61e2,#4a82ff,#ffbe7c,#82ffc9);
-    background-size:400% 400%;
-    filter:blur(8px);
-    opacity:0.4;
-    border-radius:16px;
-    animation:borderGlow 8s linear infinite;
-    z-index:0;
-  }
-  .card::after{
-    content:'';
-    position:absolute;
-    inset:2px;
-    background:var(--panel);
-    border-radius:16px;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
-    z-index:1;
-  }
-  @keyframes borderGlow{
-    0%{background-position:0 0;}
-    100%{background-position:100% 100%;}
+  .search-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    overflow: hidden;
+    height: 0;
+    transition: height 0.28s;
   }
 
-  .card:hover{transform:translateY(-8px) scale(1.05); box-shadow:0 18px 40px rgba(0,0,0,0.5)}
+  .search-container.active {
+    height: 68px;
+  }
 
+  .search-container input {
+    width: 60%;
+    max-width: 520px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 0;
+    background: #1d1d1f;
+    color: #fff;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
 
-/* 
-  Define the keyframes for the automatic shine effect: 
-  A semi-transparent white stripe that slides across the counter repeatedly.
-*/
-@keyframes automaticShine {
-    0% {
-        /* Start off-screen to the left, skewed for a slanted look */
-        transform: translateX(-150%) skewX(-20deg); 
-    }
-    100% {
-        /* End far off-screen to the right */
-        transform: translateX(250%) skewX(-20deg); 
-    }
-}
+  main {
+    padding: 40px 20px 100px;
+    display: flex;
+    justify-content: center;
+  }
 
-/*
-  Define the keyframes for a subtle glow pulse effect:
-  Makes the box-shadow grow and shrink for a "breathing" effect.
-*/
-@keyframes pulseGlow {
-    0%, 100% {
-        box-shadow: 0 0 5px rgba(255, 255, 255, 0.4), 0 0 10px rgba(124, 92, 255, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(124, 92, 255, 0.7);
-    }
-}
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--gap);
+    max-width: 1400px;
+    width: 100%;
+  }
 
+  .card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--panel);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
+  }
 
-/* 
-  Main Counter Styles
-*/
-.counter {
+  .card:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+  }
+
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .card-overlay {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(124, 92, 255, 0.85);
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    transition: opacity 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #fff;
     font-weight: 700;
-    color: #fff; /* Added explicit color for the number */
-    transition: transform 0.2s, background 0.2s;
-    z-index: 3;
-    
-    /* Required for positioning pseudo-elements and containing the shine effect */
-    position: relative; 
-    overflow: hidden; 
-    /* Apply the pulse glow animation to the main element */
-    animation: pulseGlow 5s infinite ease-in-out; 
-}
+    font-size: 1.1rem;
+    text-align: center;
+    z-index: 2;
+  }
 
-/* 
-  Automatic Shine Effect using ::after pseudo-element 
-*/
-.counter::after {
-    content: '';
+  .card:hover .card-overlay {
+    opacity: 1;
+  }
+
+  .counter {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%; /* Width of the shine stripe */
-    height: 100%;
-    /* Gradient for the shine effect */
-    background: linear-gradient(to right, 
-        rgba(255, 255, 255, 0) 0%, 
-        rgba(255, 255, 255, 0.5) 50%, /* Semi-transparent white shine */
-        rgba(255, 255, 255, 0) 100%
-    );
-    /* Apply the automatic shine animation */
-    animation: automaticShine 3s infinite linear; 
-    /* Ensures the shine element doesn't block mouse clicks/hovers */
-    pointer-events: none; 
-}
-
-/* 
-  Your existing animation class (applied via JavaScript usually)
-*/
-.counter.animate {
-    transform: scale(5);
-    background: #ff61e2;
-    /* When animated, stop the automatic shine and glow */
-    animation: none; 
-}
-
-.counter.animate::after {
-    /* Hide the shine effect when the counter is in its animated state */
-    display: none; 
-}
-
-.counter{ position:absolute; top:10px; right:10px; width:32px; height:32px; border-radius:50%; background:rgba(124,92,255,.85); display:flex; align-items:center; justify-content:center; font-weight:700; transition: transform 0.2s, background 0.2s; z-index:3; } 
-.counter.animate { transform: scale(5); background: #ff61e2; }
-
-  
-  .footer-note{
-    color:#9aa3b2;
-    text-align:center;
-    padding:24px 12px 48px;
-    font-size:1rem;
+    top: 10px;
+    right: 10px;
+    background: rgba(124, 92, 255, 0.85);
+    color: white;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    box-shadow: 0 0 10px rgba(124,92,255,0.5);
   }
 
-  @media(max-width:768px){
-    .card-grid {
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap:12px;
-    }
+  .footer-note {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    font-size: 1rem;
   }
 
-   .container { padding: 20px; }
-        .nav-button {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
+  @media(max-width:768px) {
+    header { font-size: 2rem; }
+    .card-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  }
 </style>
 </head>
 <body>
 
 <button class="theme-toggle" id="themeToggle">🌙</button>
-  <div class="container">
-        <h1>Welcome to the Index Page</h1>
-        <p>This is your main page. Click the button below to go to the iFrame runner page.</p>
-
-        <!-- Add this link/button to go to the runner page -->
-        <a href="runner1.html" class="nav-button">Go to iFrame Runner</a>
-    </div>
 
 <header>
   Couch Potato Schoolz
-  <h2>hi :|</h2>
+  <h2>Discover, Play, and Compete</h2>
 </header>
 
-<button id="toggleBtn" class="search-toggle" aria-expanded="false">Search Games</button>
-<div id="searchContainer" class="search-container" aria-hidden="true">
-  <input id="searchInput" type="text" placeholder="Type to search" aria-label="Search cards">
+<div class="controls">
+  <button id="toggleBtn" class="search-toggle">🔍 Search</button>
+  <button id="sortBtn" class="sort-toggle">🔥 Sort by Most Played</button>
+</div>
+
+<div id="searchContainer" class="search-container">
+  <input id="searchInput" type="text" placeholder="Type to search games..." />
 </div>
 
 <main>
   <div class="card-grid" id="cardGrid">
-    <div class="card" data-name="geometrydashleveleditor" data-view="geometrydashleveleditor">
-      <img loading="lazy" src="assets/geometrydashleveleditor.png" alt="Geometry Dash Level Editor">
-      <div class="card-overlay"></div>
+    <div class="card" data-name="geometrydashleveleditor">
+      <img src="assets/geometrydashleveleditor.png" alt="Geometry Dash Level Editor">
+      <div class="card-overlay">Geometry Dash Editor</div>
       <div class="counter">0</div>
     </div>
-    <div class="card" data-name="arc" data-view="arc">
-      <img loading="lazy" src="assets/Arc.png" alt="Arc">
-      <div class="card-overlay"></div>
+
+    <div class="card" data-name="arc">
+      <img src="assets/Arc.png" alt="Arc">
+      <div class="card-overlay">Arc</div>
       <div class="counter">0</div>
     </div>
-    <div class="card" data-name="greenfeildinfinite" data-view="greenfeildinfinite">
-      <img loading="lazy" src="assets/greenfeildinfinte.png" alt="Green Feild Infinite">
-      <div class="card-overlay"></div>
+
+    <div class="card" data-name="greenfeildinfinite">
+      <img src="assets/greenfeildinfinte.png" alt="Green Field Infinite">
+      <div class="card-overlay">Green Field Infinite</div>
       <div class="counter">0</div>
     </div>
-    <div class="card" data-name="EaglerCraft" data-view="EaglerCraft">
-      <img loading="lazy" src="https://picsum.photos/seed/city/800/800" alt="EaglerCraft">
-      <div class="card-overlay"></div>
+
+    <div class="card" data-name="EaglerCraft">
+      <img src="https://picsum.photos/seed/city/800/800" alt="EaglerCraft">
+      <div class="card-overlay">EaglerCraft</div>
+      <div class="counter">0</div>
+    </div>
+
+    <div class="card" data-name="BackRooms">
+      <img src="https://picsum.photos/seed/backrooms/800/800" alt="BackRooms">
+      <div class="card-overlay">BackRooms</div>
+      <div class="counter">0</div>
+    </div>
+
+    <div class="card" data-name="CallOfBattle">
+      <img src="https://picsum.photos/seed/warzone/800/800" alt="Call of Battle">
+      <div class="card-overlay">Call of Battle</div>
       <div class="counter">0</div>
     </div>
   </div>
-  <div class="card" data-name="BackRooms" data-view="BackRooms">
-      <img loading="lazy" src="https://picsum.photos/seed/city/800/800" alt="BackRooms">
-      <div class="card-overlay"></div>
-      <div class="counter">0</div>
-    </div>
-  </div>
-   <div class="card" data-name="CallOfBattle" data-view="CallOfBattle">
-      <img loading="lazy" src="https://picsum.photos/seed/city/800/800" alt="CallOfBattle">
-      <div class="card-overlay"></div>
-      <div class="counter">0</div>
-    </div>
-  </div>
-  <img loading="lazy" src="your-image-url" alt="Description" class="loaded">
 </main>
 
 <div class="footer-note">
-  Click a square to open its viewer in a new tab.
+  Click any card to open the game in a new tab.
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 const themeToggle = document.getElementById('themeToggle');
-themeToggle.addEventListener('click',()=>document.body.classList.toggle('dark-theme'));
+themeToggle.addEventListener('click', ()=>document.body.classList.toggle('dark-theme'));
 
-const toggleBtn=document.getElementById('toggleBtn');
-const searchContainer=document.getElementById('searchContainer');
-const searchInput=document.getElementById('searchInput');
-const cards=Array.from(document.querySelectorAll('.card'));
+const toggleBtn = document.getElementById('toggleBtn');
+const searchContainer = document.getElementById('searchContainer');
+const searchInput = document.getElementById('searchInput');
+const cards = Array.from(document.querySelectorAll('.card'));
 
-toggleBtn.addEventListener('click',()=>{
-  const active=searchContainer.classList.toggle('active');
-  toggleBtn.setAttribute('aria-expanded',String(active));
-  searchContainer.setAttribute('aria-hidden',String(!active));
-  if(active)setTimeout(()=>searchInput.focus(),200);
-  else{searchInput.value='';applyFilter('');}
+toggleBtn.addEventListener('click', () => {
+  searchContainer.classList.toggle('active');
+  if (searchContainer.classList.contains('active')) {
+    setTimeout(()=>searchInput.focus(),200);
+  } else {
+    searchInput.value='';
+    applyFilter('');
+  }
 });
 
-searchInput.addEventListener('input',()=>applyFilter(searchInput.value.trim().toLowerCase()));
+searchInput.addEventListener('input', () => applyFilter(searchInput.value.trim().toLowerCase()));
 
-function applyFilter(term){
-  const terms = term.split(',').map(t=>t.trim());
-  cards.forEach(card=>{
-    const name=(card.dataset.name||'').toLowerCase();
-    card.style.display = terms.every(t=>name.includes(t.toLowerCase())) ? '' : 'none';
+function applyFilter(term) {
+  cards.forEach(card => {
+    const name = (card.dataset.name || '').toLowerCase();
+    card.style.display = name.includes(term) ? '' : 'none';
   });
 }
 
-cards.forEach(card=>{
-  const name=card.dataset.name;
-  const counterEl=card.querySelector('.counter');
-  let count=parseInt(localStorage.getItem('count:'+name))||0;
-  counterEl.textContent=count;
-
-  card.addEventListener('click',()=>{
-    count++;
-    localStorage.setItem('count:'+name,String(count));
-    counterEl.textContent=count;
-    counterEl.classList.add('animate');
-    setTimeout(()=>counterEl.classList.remove('animate'), 300);
-
-    const viewKey=encodeURIComponent(card.dataset.view||'');
-    const newTab=window.open('about:blank','_blank');
-    if(!newTab){alert('Popup blocked');return;}
-    const html=`<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>${name}</title><style>html,body{height:100%;margin:0;background:#0e0f12;color:#fff;font-family:Inter,Arial,sans-serif;overflow:hidden}iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#000}</style></head><body><iframe src='viewer.html?view=${viewKey}'></iframe></body></html>`;
-    newTab.document.open();newTab.document.write(html);newTab.document.close();
-  });
-});
-
+// Handle counter logic
 cards.forEach(card => {
-  // Add transform-style to parent for proper 3D context
-  card.style.transformStyle = 'preserve-3d';
-  
-  card.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width/2;
-    const y = e.clientY - rect.top - rect.height/2;
-    
-    // Use requestAnimationFrame for smoother animation
-    requestAnimationFrame(() => {
-      card.style.transform = `rotateY(${x*0.05}deg) rotateX(${-y*0.05}deg) scale(1.05)`;
-    });
-  });
-  
-  card.addEventListener('mouseleave', () => {
-    requestAnimationFrame(() => {
-      card.style.transform = 'translateY(-8px) scale(1.05)';
-    });
+  const name = card.dataset.name;
+  const counterEl = card.querySelector('.counter');
+  let count = parseInt(localStorage.getItem('count:' + name)) || 0;
+  counterEl.textContent = count;
+
+  card.addEventListener('click', () => {
+    count++;
+    localStorage.setItem('count:' + name, count);
+    counterEl.textContent = count;
+    const viewKey = encodeURIComponent(name);
+    const newTab = window.open('viewer.html?view=' + viewKey, '_blank');
+    if (!newTab) alert('Popup blocked');
   });
 });
 
-/* GSAP Fade-in */
-gsap.from('.card', {opacity:0,y:50,stagger:0.1,duration:1,ease:'power3.out'});
+// Sort by Most Played
+document.getElementById('sortBtn').addEventListener('click', () => {
+  const grid = document.getElementById('cardGrid');
+  const sorted = [...cards].sort((a, b) => {
+    const aCount = parseInt(a.querySelector('.counter').textContent);
+    const bCount = parseInt(b.querySelector('.counter').textContent);
+    return bCount - aCount;
+  });
+  sorted.forEach(c => grid.appendChild(c));
+});
 </script>
+
 </body>
 </html>
-
