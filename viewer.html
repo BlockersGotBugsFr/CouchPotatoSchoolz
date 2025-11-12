@@ -110,6 +110,13 @@ html, body {
     font-size: 0.75rem;
     font-weight: 600;
     color: #fff;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .counter:hover {
+    transform: scale(1.1); /* Makes the counter slightly larger */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px var(--accent); /* Adds a subtle glow/shine */
+    cursor: pointer;
   }
 
   .back {
