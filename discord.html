@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .discord-invite-box {
+            background-color: #36393f;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 400px;
+            margin: 20px auto;
+            color: white;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .server-info {
+            margin-bottom: 15px;
+        }
+
+        .server-name {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .member-count {
+            color: #72767d;
+            font-size: 0.9em;
+        }
+
+        .join-button {
+            background-color: #5865f2;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        .join-button:hover {
+            background-color: #4752b7;
+        }
+    </style>
+</head>
+<body>
+    <div id="discordInviteBox"></div>
+
+    <script>
+        const discordInvite = {
+            init(config) {
+                this.config = {
+                    inviteCode: config.inviteCode || 'your-invite-code',
+                    title: config.title || 'Discord Server',
+                    miniMode: config.miniMode || false,
+                    width: config.width || '385px',
+                    joinText: config.joinText || 'Join',
+                    joinedText: config.joinedText || 'Joined'
+                };
+                
+                this.element = document.getElementById('discordInviteBox');
+                this.render();
+            },
+
+            render() {
+                let html = `
+                    <div class="discord-invite-box" style="width: ${this.config.width}">
+                        <div class="server-info">
+                            <div class="server-name">${this.config.title}</div>
+                            <div class="member-count">Loading...</div>
+                        </div>
+                        <button class="join-button">${this.config.joinText}</button>
+                    </div>
+                `;
+                
+                this.element.innerHTML = html;
+                
+                const button = this.element.querySelector('.join-button');
+                button.onclick = () => {
+                    window.open(`https://discord.gg/${this.config.inviteCode}`, '_blank');
+                    button.textContent = this.config.joinedText;
+                    setTimeout(() => {
+                        button.textContent = this.config.joinText;
+                    }, 2000);
+                };
+            }
+        };
+
+        // Initialize with your Discord invite code
+        discordInvite.init({
+            inviteCode: 'your-invite-code', // Replace with your invite code
+            title: 'My Awesome Server',
+            miniMode: false,
+            width: 'auto'
+        });
+    </script>
+</body>
+</html>
