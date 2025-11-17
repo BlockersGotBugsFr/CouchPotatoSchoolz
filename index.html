@@ -284,12 +284,34 @@ toggleBtn.addEventListener('click', () => {
 
 searchInput.addEventListener('input', () => applyFilter(searchInput.value.trim().toLowerCase()));
 
-function applyFilter(term) {
-  cards.forEach(card => {
-    const name = (card.dataset.name || '').toLowerCase();
-    card.style.display = name.includes(term) ? '' : 'none';
+function applyFilter(term){
+  const terms = term.split(',').map(t=>t.trim());
+  cards.forEach(card=>{
+    const name=(card.dataset.name||'').toLowerCase();
+    card.style.display = terms.every(t=>name.includes(t.toLowerCase())) ? '' : 'none';
   });
 }
+
+cards.forEach(card=>{
+  const name=card.dataset.name;
+  const counterEl=card.querySelector('.counter');
+  let count=parseInt(localStorage.getItem('count:'+name))||0;
+  counterEl.textContent=count;
+
+  card.addEventListener('click',()=>{
+    count++;
+    localStorage.setItem('count:'+name,String(count));
+    counterEl.textContent=count;
+    counterEl.classList.add('animate');
+    setTimeout(()=>counterEl.classList.remove('animate'), 300);
+
+    const viewKey=encodeURIComponent(card.dataset.view||'');
+    const newTab=window.open('about:blank','_blank');
+    if(!newTab){alert('Popup blocked');return;}
+    const html=`<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>${name}</title><style>html,body{height:100%;margin:0;background:#0e0f12;color:#fff;font-family:Inter,Arial,sans-serif;overflow:hidden}iframe{position:fixed;inset:0;width:100%;height:100%;border:0;background:#000}</style></head><body><iframe src='viewer.html?view=${viewKey}'></iframe></body></html>`;
+    newTab.document.open();newTab.document.write(html);newTab.document.close();
+  });
+});
 
 // Counter + click open
 cards.forEach(card => {
