@@ -44,6 +44,7 @@
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            margin-right: 5px; /* Added margin for spacing between buttons */
         }
         button:hover, .nav-button:hover {
             background-color: #0056b3;
@@ -58,19 +59,24 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             background-color: #f9f9f9;
-            /* Add styles for fullscreen mode if needed, the API handles the sizing */
         }
         .nav-button {
             margin-bottom: 20px;
         }
         #fullscreenButton {
-            background-color: #28a745; /* Green color for fullscreen button */
-            margin-left: 10px;
+            background-color: #28a745;
         }
         #fullscreenButton:hover {
             background-color: #218838;
         }
-
+        /* Style for the new copy button */
+        #copyLinkButton {
+            background-color: #ff5722; /* Orange color */
+            margin-top: 10px; /* Added margin to separate from iframe */
+        }
+        #copyLinkButton:hover {
+            background-color: #e64a19;
+        }
         .b {
             color: red;
             font-size: 1.2em;
@@ -88,11 +94,17 @@
         <button onclick="requestIframeFullscreen()" id="fullscreenButton">Fullscreen iFrame</button>
         
         <div id="iframe-wrapper">
-            <!-- IMPORTANT: Add the allow="fullscreen" attribute -->
             <iframe id="contentFrame" src="about:blank" title="Embedded Website" allow="fullscreen"></iframe>
         </div>
+        
         <br>
-        <a>AI: 	https://www.phind.com/<br><b>PlEASE DONT BE A DUMB ASS!!</b><br>if you use this link in google it will get <b>BLOCKED!</b></a>
+        <!-- Replaced the <a> tag with a button and added an ID to a span for clarity -->
+        <div>
+            <span class="b">PLEASE DONT BE A DUMB ASS!!</span><br>
+            if you use this link in google it will get <b>BLOCKED!</b><br>
+            AI Link: <span id="aiLinkText">https://www.phind.com/</span>
+            <button onclick="copyAiLink()" id="copyLinkButton">Copy AI Link</button>
+        </div>
 
     </div>
     
@@ -128,6 +140,23 @@
             } else {
                 alert("Fullscreen API is not supported by this browser or feature is blocked by the embedded website's policy.");
             }
+        }
+
+        // NEW: Function to copy the specific link text to the clipboard
+        function copyAiLink() {
+            // Get the text content of the span containing the URL
+            const linkText = document.getElementById('aiLinkText').textContent;
+
+            // Use the Clipboard API to write text to the clipboard
+            // This API is asynchronous and returns a Promise
+            navigator.clipboard.writeText(linkText).then(() => {
+                // Success message (optional, you could replace button text temporarily)
+                alert("Link copied to clipboard: " + linkText);
+            }).catch(err => {
+                // Error handling (e.g., if permission is denied or browser doesn't support it)
+                console.error('Could not copy text: ', err);
+                alert("Failed to copy link. Please copy manually: " + linkText);
+            });
         }
 
         document.addEventListener('DOMContentLoaded', (event) => {
