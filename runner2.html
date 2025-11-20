@@ -1,444 +1,273 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orange-Style Tabbed Browser</title>
-    <style>
-        /* Base Reset */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Orange Neon Browser — Upgraded</title>
+<style>
+  :root{
+    --bg:#0f0f10;
+    --card:#111214;
+    --muted:#bdbdbd;
+    --orange:#ff6a2d;
+    --orange-deep:#f04b1a;
+    --glow: 0 8px 30px rgba(255,106,45,0.14), 0 2px 6px rgba(240,75,26,0.06);
+    --radius:14px;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,#060607 0%, #0d0d0d 100%);
+    color:#eaeaea;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    display:flex;align-items:center;justify-content:center;padding:18px;
+  }
+  /* Outer frame */
+  .browser-wrap{
+    width:1100px;max-width:98%;height:700px;border-radius:18px;overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.04);
+    display:flex;flex-direction:column;
+  }
+  /* Top chrome */
+  .top-bar{height:68px;display:flex;align-items:center;padding:12px 16px;gap:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-bottom:1px solid rgba(255,255,255,0.02)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--orange),var(--orange-deep));box-shadow:0 6px 20px rgba(255,106,45,0.24);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff}
+  .brand h1{font-size:18px;margin:0}/* Tabs */ .tabs{display:flex;align-items:center;gap:8px;flex:1;overflow:hidden;padding-left:4px} .tab{display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:12px;background:transparent;color:var(--muted);cursor:pointer;transition:all .22s;white-space:nowrap} .tab:hover{transform:translateY(-3px);background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:var(--glow)} .tab.active{color:#fff;background:linear-gradient(90deg, rgba(255,106,45,0.06), rgba(240,75,26,0.03));box-shadow:0 10px 30px rgba(255,106,45,0.08);border:1px solid rgba(255,106,45,0.08)} .tab .dot{width:8px;height:8px;border-radius:50%;background:var(--orange);box-shadow:0 4px 12px rgba(255,106,45,0.12)} .tab .title{max-width:160px;overflow:hidden;text-overflow:ellipsis} .tab .close{opacity:0.7;margin-left:8px}
 
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+/* controls */ .controls{display:flex;gap:8px} .btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer;transition:all .18s} .btn.primary{background:linear-gradient(90deg,var(--orange),var(--orange-deep));color:#fff;box-shadow:var(--glow);border:none} .btn:hover{transform:translateY(-3px)}
 
-        .browser-container {
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            background-color: #fff;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 10px;
-        }
+/* Address bar area */ .address-row{display:flex;gap:12px;padding:16px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);align-items:center;border-bottom:1px solid rgba(255,255,255,0.02)} .url-input{flex:1;padding:12px 16px;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);color:#fff;outline:none} .quick-sites{display:flex;gap:8px} .quick-sites .site-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.03);transition:all .18s} .quick-sites .site-btn:hover{transform:translateY(-4px);box-shadow:var(--glow)} .site-favicon{width:22px;height:22px;border-radius:6px;background:#fff8}
 
-        /* --- Color Variables --- */
-        :root {
-            --orange-primary: #FF7043; /* A vibrant, modern orange */
-            --orange-dark: #F4511E;
-            --ui-bg-light: #fff;
-            --ui-bg-mid: #f9f9f9;
-            --text-color: #333;
-            --border-color: #ddd;
-        }
+/* Content area */ .content{flex:1;display:flex;overflow:hidden;position:relative} .sidebar{width:260px;background:linear-gradient(180deg, rgba(255,255,255,0.012), transparent);border-right:1px solid rgba(255,255,255,0.02);padding:18px;display:flex;flex-direction:column;gap:12px} .sidebar h3{margin:0;font-size:14px;color:var(--muted)} .favorites{display:flex;flex-direction:column;gap:8px;margin-top:8px} .fav-card{display:flex;align-items:center;gap:10px;padding:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:10px;cursor:pointer;border:1px solid rgba(255,255,255,0.02)} .fav-card .fav-icon{width:40px;height:40px;border-radius:8px;background:linear-gradient(90deg,var(--orange),var(--orange-deep));display:flex;align-items:center;justify-content:center;font-weight:700} .fav-card .fav-meta{display:flex;flex-direction:column} .fav-card .fav-meta .name{font-weight:600} .fav-card .fav-meta .url{font-size:12px;color:var(--muted)}
 
-        /* --- Tab Bar Styling --- */
-        #tabs-container {
-            display: flex;
-            background-color: var(--ui-bg-mid);
-            overflow-x: auto;
-            border-bottom: 1px solid var(--border-color);
-            padding-left: 10px;
-            height: 42px;
-            align-items: center;
-        }
+.add-link{display:flex;gap:8px;margin-top:8px} .add-link input{flex:1;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#fff}
 
-        .tab-button {
-            display: flex;
-            align-items: center;
-            padding: 0 12px;
-            height: 42px;
-            background-color: var(--ui-bg-mid);
-            border-right: 1px solid var(--border-color);
-            cursor: pointer;
-            white-space: nowrap;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 0.9em;
-            color: var(--text-color);
-        }
-        
-        .tab-button.active {
-            background-color: var(--ui-bg-light);
-            border-bottom: 2px solid var(--orange-primary); /* Orange active indicator */
-            font-weight: bold;
-        }
-        .tab-button:hover:not(.active) {
-            background-color: #eee;
-        }
+.main-view{flex:1;position:relative;display:flex;flex-direction:column} .iframe-wrap{flex:1;background:linear-gradient(180deg,#0b0b0b,#0d0d0d);position:relative} iframe{width:100%;height:100%;border:none}
 
-        .close-tab {
-            margin-left: 15px;
-            font-size: 18px;
-            color: #aaa;
-            cursor: pointer;
-        }
-        .close-tab:hover { color: var(--text-color); }
-        
-        .add-tab-button {
-            height: 30px;
-            font-size: 24px;
-            line-height: 1;
-            padding: 0 10px;
-            margin-left: 10px;
-            background-color: transparent;
-            color: var(--text-color);
-            border: none;
-        }
-        .add-tab-button:hover { background-color: #eee; border-radius: 4px; }
+/* Loading shimmer */ .loader{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:30;display:none;align-items:center;gap:12px} .loader.show{display:flex} .pulse{width:14px;height:14px;border-radius:50%;background:var(--orange);animation:pulse 1.1s infinite} @keyframes pulse{0%{transform:scale(.7);opacity:.6}50%{transform:scale(1.05);opacity:1}100%{transform:scale(.7);opacity:.6}}
 
+/* Popup toasts (random) */ .popup{position:absolute;right:22px;bottom:22px;background:linear-gradient(90deg,#141414,#1a1a1a);padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 10px 40px rgba(0,0,0,0.6);transform:translateY(20px);opacity:0;animation:popIn .5s forwards} @keyframes popIn{to{transform:translateY(0);opacity:1}} .popup .label{font-weight:700;color:var(--orange);margin-bottom:6px}
 
-        /* --- Address Bar Area --- */
-        .address-bar-area {
-            display: flex;
-            align-items: center;
-            padding: 8px 10px;
-            background-color: var(--ui-bg-light);
-            border-bottom: 1px solid var(--border-color);
-        }
-        #urlInput {
-            flex-grow: 1;
-            padding: 8px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            margin: 0 10px;
-            font-size: 14px;
-            background-color: var(--ui-bg-mid);
-        }
-        .nav-btn {
-            padding: 8px 12px;
-            background-color: var(--orange-primary);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .nav-btn:hover { background-color: var(--orange-dark); }
-        #fullscreenButton { background-color: #1abc9c; } /* A complementary green/teal for contrast */
-        #fullscreenButton:hover { background-color: #16a085; }
+/* small helpers */ .muted{color:var(--muted)} .small{font-size:13px}
 
+/* responsive */ @media (max-width:900px){.sidebar{display:none}.browser-wrap{height:90vh}}
 
-        /* --- iFrame Content Area & Homepage Styling --- */
-        #iframes-container {
-            flex-grow: 1;
-            position: relative;
-        }
-        .iframe-tab-content {
-            display: none;
-            width: 100%;
-            height: 100%;
-        }
-        .iframe-tab-content.active { display: block; }
-        .iframe-tab-content iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .homepage-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            background: var(--ui-bg-mid);
-            text-align: center;
-        }
-        .homepage-content h1 {
-            color: var(--orange-dark);
-            font-size: 64px;
-            margin-bottom: 40px;
-        }
-        .homepage-search-input {
-            width: 80%;
-            max-width: 600px;
-            padding: 15px 30px;
-            border: 2px solid var(--orange-primary);
-            border-radius: 30px;
-            font-size: 18px;
-            box-shadow: 0 8px 16px rgba(var(--orange-primary), 0.2);
-            text-align: center;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .homepage-search-input:focus {
-            border-color: var(--orange-dark);
-            box-shadow: 0 8px 20px rgba(var(--orange-dark), 0.3);
-            outline: none;
-        }
-
-
-        /* --- Fullscreen Overlay Controls --- */
-        #fullscreen-controls-bar {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(30, 30, 30, 0.95);
-            padding: 5px;
-            z-index: 2147483647;
-            height: 40px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-        .fullscreen-tab-button {
-             padding: 5px 10px;
-             background-color: #555;
-             color: white;
-             border: none;
-             cursor: pointer;
-             margin-right: 5px;
-             border-radius: 3px;
-        }
-        .fullscreen-tab-button.active { background-color: var(--orange-primary); }
-    </style>
+</style>
 </head>
 <body>
-
-    <!-- Fullscreen Controls Bar (Invisible normally) -->
-    <div id="fullscreen-controls-bar"></div>
-
-    <div class="browser-container">
-        <!-- Tab Bar -->
-        <div id="tabs-container">
-            <button class="add-tab-button" onclick="createNewTab(null)" title="Open new tab">+</button>
+  <div class="browser-wrap" id="browserWrap">
+    <div class="top-bar">
+      <div class="brand">
+        <div class="logo">O</div>
+        <div>
+          <h1>Orange Neon</h1>
+          <div class="small muted">Custom links • animated UI • random popups</div>
         </div>
+      </div><div class="tabs" id="tabsRow" aria-hidden="false"></div>
 
-        <!-- Address Bar / Controls -->
-        <div class="address-bar-area">
-            <button onclick="navigateHistory(-1)" class="nav-btn" title="Back">←</button>
-            <button onclick="navigateHistory(1)" class="nav-btn" title="Forward">→</button>
-            <input type="text" id="urlInput" placeholder="Enter URL (e.g., example.com) and press Enter">
-            <button onclick="loadIframe()" class="nav-btn">Go</button>
-            <button onclick="requestIframeFullscreen()" id="fullscreenButton">Fullscreen</button>
-        </div>
+  <div class="controls">
+    <button class="btn" id="newTabBtn">New Tab</button>
+    <button class="btn primary" id="fullscreenBtn">Fullscreen</button>
+  </div>
+</div>
 
-        <!-- iFrame Content Area -->
-        <div id="iframes-container">
-            <!-- iFrames added by JS -->
-        </div>
+<div class="address-row">
+  <input id="mainUrl" class="url-input" placeholder="Type a URL or pick a quick site (e.g., example.com)" />
+  <div class="quick-sites" id="quickSites">
+    <!-- site buttons rendered here -->
+  </div>
+  <button class="btn primary" id="goBtn">Go</button>
+</div>
 
+<div class="content">
+  <aside class="sidebar">
+    <h3>Favorites</h3>
+    <div class="favorites" id="favorites"></div>
+
+    <h3 class="muted">Add custom link</h3>
+    <div class="add-link">
+      <input id="favName" placeholder="Name (e.g., My Site)" />
+      <input id="favUrl" placeholder="URL (e.g., example.com)" />
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn" id="addFavBtn">Add</button>
+      <button class="btn" id="clearFavs">Clear</button>
     </div>
 
-    <script>
-        // --- Global State and References ---
-        let tabs = [];
-        let activeTabIdCounter = 0;
-        const tabsContainer = document.getElementById('tabs-container');
-        const iframesContainer = document.getElementById('iframes-container');
-        const urlInput = document.getElementById('urlInput');
-        const fullscreenControlsBar = document.getElementById('fullscreen-controls-bar');
-        const plusButtonInTabArea = document.querySelector('.add-tab-button');
+    <div style="margin-top:auto;color:var(--muted);font-size:12px">Tip: URLs auto-add https:// if missing.</div>
+  </aside>
 
+  <div class="main-view">
+    <div class="iframe-wrap" id="iframeWrap">
+      <!-- tabs' iframe containers created dynamically -->
+      <div class="loader" id="loader"><div class="pulse"></div><div class="muted">Loading…</div></div>
+    </div>
+  </div>
+</div>
 
-        // --- Tab Management Functions ---
+  </div> <script>
+    // --- State ---
+    const tabs = []; // {id, title, url, el, iframeEl}
+    let activeTabId = null;
 
-        function createNewTab(url = null, tabName = null) {
-            activeTabIdCounter++;
-            const tabId = `tab-${activeTabIdCounter}`;
-            const isHomepage = url === null; // Null specifically means load the custom homepage
-            const initialUrl = isHomepage ? 'about:blank' : url;
+    const defaultSites = [
+      {name:'Google', url:'https://google.com'},
+      {name:'YouTube', url:'https://youtube.com'},
+      {name:'Roblox', url:'https://roblox.com'},
+      {name:'GitHub', url:'https://github.com'},
+      {name:'Discord', url:'https://discord.com'}
+    ];
 
-            // 1. Create the Tab Button element
-            const tabButton = document.createElement('div'); 
-            tabButton.classList.add('tab-button');
-            tabButton.onclick = () => switchTab(tabId);
-            
-            const titleSpan = document.createElement('span');
-            titleSpan.innerText = tabName || (isHomepage ? 'New Tab' : getHostName(initialUrl));
-            tabButton.appendChild(titleSpan);
+    // --- Elements ---
+    const tabsRow = document.getElementById('tabsRow');
+    const newTabBtn = document.getElementById('newTabBtn');
+    const goBtn = document.getElementById('goBtn');
+    const mainUrl = document.getElementById('mainUrl');
+    const iframeWrap = document.getElementById('iframeWrap');
+    const loader = document.getElementById('loader');
+    const quickSites = document.getElementById('quickSites');
+    const favoritesEl = document.getElementById('favorites');
+    const addFavBtn = document.getElementById('addFavBtn');
+    const favName = document.getElementById('favName');
+    const favUrl = document.getElementById('favUrl');
+    const clearFavs = document.getElementById('clearFavs');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
 
-            const closeBtn = document.createElement('span');
-            closeBtn.innerHTML = '&times;';
-            closeBtn.classList.add('close-tab');
-            closeBtn.onclick = (e) => {
-                e.stopPropagation(); 
-                closeTab(tabId);
-            };
-            tabButton.appendChild(closeBtn);
-            tabsContainer.insertBefore(tabButton, plusButtonInTabArea);
+    // --- Helpers ---
+    function fmt(u){ if(!u) return ''; if(!u.match(/^https?:\/\//)) return 'https://' + u; return u; }
+    function hostname(u){ try{return new URL(u).hostname.replace('www.','')}catch(e){return u}}
+    function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min}
 
-            // 2. Create the Iframe/Homepage Content Wrapper
-            const contentWrapper = document.createElement('div');
-            contentWrapper.id = tabId;
-            contentWrapper.classList.add('iframe-tab-content');
+    // --- Tabs management ---
+    function createTab(url=null, title=null){
+      const id = 't-'+Date.now()+'-'+Math.random().toString(36).slice(2,6);
+      const isHome = !url;
+      const tab = document.createElement('div'); tab.className='tab'; tab.dataset.id=id;
+      const dot = document.createElement('div'); dot.className='dot';
+      const tspan = document.createElement('div'); tspan.className='title'; tspan.innerText= title || (isHome? 'New Tab': hostname(fmt(url)));
+      const close = document.createElement('div'); close.className='close muted'; close.innerHTML='✕';
+      tab.appendChild(dot); tab.appendChild(tspan); tab.appendChild(close);
+      tabsRow.appendChild(tab);
 
-            if (isHomepage) {
-                contentWrapper.innerHTML = `
-                    <div class="homepage-content">
-                        <h1>Browser Home</h1>
-                        <input type="text" class="homepage-search-input" placeholder="Search or type URL" onkeypress="handleHomepageInput(event, '${tabId}')">
-                    </div>
-                `;
-            } else {
-                 contentWrapper.innerHTML = `<iframe src="${initialUrl}" title="Embedded Website ${tabId}" allow="fullscreen"></iframe>`;
-            }
-            iframesContainer.appendChild(contentWrapper);
+      const frameWrap = document.createElement('div'); frameWrap.style.position='absolute'; frameWrap.style.top=0; frameWrap.style.left=0; frameWrap.style.right=0; frameWrap.style.bottom=0; frameWrap.style.display='none';
+      if(!isHome){
+        const iframe=document.createElement('iframe'); iframe.src=fmt(url); iframe.sandbox='allow-scripts allow-same-origin allow-forms'; iframe.loading='lazy';
+        frameWrap.appendChild(iframe);
+        iframe.addEventListener('load', ()=>{ hideLoader(); });
+      } else {
+        frameWrap.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--muted)"><h2 style='color:var(--orange)'>Welcome</h2><p class='muted'>Type a URL or click a favorite</p></div>`;
+      }
 
-            tabs.push({ id: tabId, url: initialUrl, buttonElement: tabButton, contentElement: contentWrapper, titleElement: titleSpan, isHomepage: isHomepage });
-            switchTab(tabId);
-        }
-        
-        function handleHomepageInput(event, tabId) {
-            if (event.key === 'Enter') {
-                const url = event.target.value.trim();
-                if (url) {
-                    const activeTab = tabs.find(tab => tab.id === tabId);
-                    if (activeTab) {
-                        const formattedUrl = formatUrl(url);
-                        activeTab.url = formattedUrl;
-                        activeTab.isHomepage = false;
-                        activeTab.titleElement.innerText = getHostName(formattedUrl);
-                        // Replace the div homepage content with the iframe
-                        activeTab.contentElement.innerHTML = `<iframe src="${formattedUrl}" title="Embedded Website" allow="fullscreen"></iframe>`;
-                        urlInput.value = formattedUrl; 
-                    }
-                }
-            }
-        }
+      iframeWrap.appendChild(frameWrap);
 
-        function closeTab(tabId) {
-            const index = tabs.findIndex(tab => tab.id === tabId);
-            if (index > -1) {
-                const tab = tabs[index];
-                const wasActive = tab.buttonElement.classList.contains('active');
-                
-                tab.buttonElement.remove();
-                tab.contentElement.remove();
-                tabs.splice(index, 1);
+      tabs.push({id,url,title:tspan.innerText,tabEl:tab,frameEl:frameWrap});
 
-                if (wasActive && tabs.length > 0) {
-                    const newActiveIndex = index > 0 ? index - 1 : 0;
-                    switchTab(tabs[newActiveIndex].id);
-                } else if (tabs.length === 0) {
-                    createNewTab(null); 
-                }
-            }
-        }
+      tab.addEventListener('click', ()=>switchTab(id));
+      close.addEventListener('click', (e)=>{ e.stopPropagation(); closeTab(id); });
 
-        function switchTab(tabId) {
-            tabs.forEach(tab => {
-                tab.contentElement.classList.remove('active');
-                tab.buttonElement.classList.remove('active');
-            });
+      switchTab(id);
+    }
 
-            const selectedTab = tabs.find(tab => tab.id === tabId);
-            if (selectedTab) {
-                selectedTab.contentElement.classList.add('active');
-                selectedTab.buttonElement.classList.add('active');
-                // Sync the main address bar with the active tab's URL/state
-                urlInput.value = selectedTab.isHomepage ? '' : selectedTab.url;
-            }
-            
-            if (document.fullscreenElement || document.webkitFullscreenElement) {
-                updateFullscreenControls();
-            }
-        }
+    function switchTab(id){
+      tabs.forEach(t=>{
+        t.tabEl.classList.toggle('active', t.id===id);
+        t.frameEl.style.display = (t.id===id)?'block':'none';
+      });
+      activeTabId = id;
+      const active = tabs.find(t=>t.id===id);
+      mainUrl.value = active && active.url ? active.url : '';
+    }
 
-        function loadIframe() {
-            const url = urlInput.value.trim();
-            if (url) {
-                const formattedUrl = formatUrl(url);
-                const activeTab = tabs.find(tab => tab.contentElement.classList.contains('active'));
-                
-                if (activeTab && (activeTab.isHomepage || activeTab.url === 'about:blank')) {
-                    // Update the active tab rather than opening a new one
-                    activeTab.url = formattedUrl;
-                    activeTab.isHomepage = false;
-                    activeTab.titleElement.innerText = getHostName(formattedUrl);
-                    activeTab.contentElement.innerHTML = `<iframe src="${formattedUrl}" title="Embedded Website" allow="fullscreen"></iframe>`;
-                } else {
-                    // Open a new tab
-                    createNewTab(formattedUrl, getHostName(formattedUrl));
-                }
-            }
-        }
-        
-        function formatUrl(url) {
-             if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                 return 'https://' + url;
-             }
-             return url;
-        }
+    function closeTab(id){
+      const idx = tabs.findIndex(t=>t.id===id);
+      if(idx===-1) return;
+      const wasActive = tabs[idx].id===activeTabId;
+      tabs[idx].tabEl.remove(); tabs[idx].frameEl.remove(); tabs.splice(idx,1);
+      if(wasActive){ if(tabs[idx]) switchTab(tabs[idx].id); else if(tabs.length) switchTab(tabs[tabs.length-1].id); else createTab(null); }
+    }
 
-        function getHostName(url) {
-            try { return new URL(url).hostname.replace('www.', ''); } catch (e) { return "Website"; }
-        }
-        
-        function navigateHistory(delta) {
-            const activeTab = tabs.find(tab => tab.contentElement.classList.contains('active'));
-            if (activeTab && !activeTab.isHomepage) {
-                activeTab.contentElement.querySelector('iframe').contentWindow.history.go(delta);
-            }
-        }
+    // --- Loading / navigation ---
+    function openUrl(url){ if(!url) return; const f = fmt(url); const active = tabs.find(t=>t.id===activeTabId);
+      if(active){ // replace active
+        active.url = f; active.title = hostname(f); active.tabEl.querySelector('.title').innerText = active.title;
+        // replace frame
+        active.frameEl.innerHTML = '';
+        const iframe = document.createElement('iframe'); iframe.src=f; iframe.loading='lazy'; iframe.sandbox='allow-scripts allow-same-origin allow-forms';
+        active.frameEl.appendChild(iframe);
+        showLoader();
+        iframe.addEventListener('load', ()=>hideLoader());
+        mainUrl.value = f;
+      } else {
+        createTab(f);
+      }
+    }
 
+    function showLoader(){ loader.classList.add('show'); }
+    function hideLoader(){ loader.classList.remove('show'); }
 
-        // --- Fullscreen Logic (No Prompts/Alerts) ---
-        function requestIframeFullscreen() {
-            const browserContainer = document.querySelector('.browser-container');
-            if (browserContainer.requestFullscreen) {
-                browserContainer.requestFullscreen();
-            } else if (browserContainer.webkitRequestFullscreen) {
-                browserContainer.webkitRequestFullscreen();
-            } else if (browserContainer.msRequestFullscreen) {
-                browserContainer.msRequestFullscreen();
-            }
-        }
+    // --- Quick sites (default + favorites) ---
+    function renderQuickSites(){ quickSites.innerHTML=''; defaultSites.forEach(s=>{
+      const b = document.createElement('div'); b.className='site-btn'; b.title=s.name; b.innerHTML=`<div class='site-favicon'></div><div class='small'>${s.name}</div>`;
+      b.addEventListener('click', ()=> openUrl(s.url)); quickSites.appendChild(b);
+    });
+    }
 
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    function renderFavorites(){ favoritesEl.innerHTML=''; const stored = loadFavs(); stored.forEach(f=>{
+      const card = document.createElement('div'); card.className='fav-card';
+      card.innerHTML = `<div class='fav-icon'>${(f.name||'').slice(0,1).toUpperCase()}</div><div class='fav-meta'><div class='name'>${f.name}</div><div class='url small muted'>${hostname(f.url)}</div></div>`;
+      card.addEventListener('click', ()=> openUrl(f.url));
+      favoritesEl.appendChild(card);
+    }); }
 
-        function handleFullscreenChange() {
-            if (document.fullscreenElement || document.webkitFullscreenElement) {
-                fullscreenControlsBar.style.display = 'block';
-                updateFullscreenControls();
-            } else {
-                fullscreenControlsBar.style.display = 'none';
-                fullscreenControlsBar.innerHTML = '';
-            }
-        }
+    function loadFavs(){ try{ const s = JSON.parse(localStorage.getItem('orange_favs')||'[]'); return s;}catch(e){return []} }
+    function saveFavs(arr){ localStorage.setItem('orange_favs', JSON.stringify(arr)); }
+    function addFav(name,url){ const arr=loadFavs(); arr.unshift({name,url:fmt(url)}); saveFavs(arr); renderFavorites(); }
+    function clearFavList(){ localStorage.removeItem('orange_favs'); renderFavorites(); }
 
-        function updateFullscreenControls() {
-            fullscreenControlsBar.innerHTML = '';
-            tabs.forEach(tab => {
-                const fsTabButton = document.createElement('button');
-                fsTabButton.innerText = tab.titleElement.innerText;
-                fsTabButton.classList.add('fullscreen-tab-button');
-                if (tab.contentElement.classList.contains('active')) {
-                    fsTabButton.classList.add('active');
-                }
-                fsTabButton.onclick = () => switchTab(tab.id);
-                fullscreenControlsBar.appendChild(fsTabButton);
-            });
-            
-            // New Tab button in fullscreen mode opens homepage directly
-            const newTabBtn = document.createElement('button');
-            newTabBtn.innerText = "+";
-            newTabBtn.classList.add('fullscreen-tab-button');
-            newTabBtn.onclick = () => createNewTab(null);
-            fullscreenControlsBar.appendChild(newTabBtn);
-        }
+    // --- Random popup system ---
+    const popupMsgs = [
+      'Tip: Press Fullscreen for a distraction-free view',
+      'New feature: Add custom links in the left panel',
+      'Did you know? URLs auto-add https://',
+      'Neon mode activated — orange vibes!',
+      'Press "Go" or press Enter in the address bar'
+    ];
+    function showRandomPopup(){ const msg = popupMsgs[rnd(0,popupMsgs.length-1)]; const p = document.createElement('div'); p.className='popup'; p.innerHTML=`<div class='label'>Orange</div><div>${msg}</div>`;
+      document.body.appendChild(p);
+      setTimeout(()=>{ p.style.opacity=0; p.style.transform='translateY(12px)'; p.addEventListener('transitionend', ()=>p.remove()); }, 3800);
+    }
+    // start random popups every 6-14 seconds
+    setInterval(()=>{ if(Math.random()<0.8) showRandomPopup(); }, rnd(6000,14000));
 
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', (event) => {
-            createNewTab(null); // Initialize with homepage
-            document.getElementById('urlInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    loadIframe();
-                }
-            });
-        });
-    </script>
-</body>
+    // --- Events ---
+    newTabBtn.addEventListener('click', ()=>createTab(null));
+    goBtn.addEventListener('click', ()=>openUrl(mainUrl.value));
+    mainUrl.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ openUrl(mainUrl.value); } });
+    addFavBtn.addEventListener('click', ()=>{ if(!favUrl.value) return; addFav(favName.value||favUrl.value, favUrl.value); favName.value=''; favUrl.value=''; });
+    clearFavs.addEventListener('click', ()=>{ if(confirm('Clear all saved favorites?')){ clearFavList(); } });
+    fullscreenBtn.addEventListener('click', ()=>{ const bw = document.getElementById('browserWrap'); if(bw.requestFullscreen) bw.requestFullscreen(); else if(bw.webkitRequestFullscreen) bw.webkitRequestFullscreen(); });
+
+    // --- Init ---
+    renderQuickSites(); renderFavorites(); createTab(null);
+
+    // restore favorites UI on load
+    window.addEventListener('load', ()=>{ renderFavorites(); });
+
+    // small animation: ripple neon on new tab
+    function neonPulse(){ const l = document.querySelector('.logo'); l.animate([{transform:'scale(.96)'},{transform:'scale(1)'}],{duration:1200,iterations:1}); }
+    setInterval(neonPulse,6000);
+
+    // accessibility: keyboard shortcuts
+    document.addEventListener('keydown', (e)=>{
+      if(e.ctrlKey && e.key==='t'){ e.preventDefault(); createTab(null); }
+      if(e.ctrlKey && e.key==='w'){ e.preventDefault(); if(activeTabId) closeTab(activeTabId); }
+    });
+
+  </script></body>
 </html>
