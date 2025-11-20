@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chrome-Style Tabbed Browser (Refined)</title>
+    <title>Orange-Style Tabbed Browser</title>
     <style>
         /* Base Reset */
         * {
@@ -14,7 +14,7 @@
 
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: #e3e3e3;
+            background-color: #f0f0f0;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -25,74 +25,77 @@
             flex-direction: column;
             flex-grow: 1;
             background-color: #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
             overflow: hidden;
             margin: 10px;
+        }
+
+        /* --- Color Variables --- */
+        :root {
+            --orange-primary: #FF7043; /* A vibrant, modern orange */
+            --orange-dark: #F4511E;
+            --ui-bg-light: #fff;
+            --ui-bg-mid: #f9f9f9;
+            --text-color: #333;
+            --border-color: #ddd;
         }
 
         /* --- Tab Bar Styling --- */
         #tabs-container {
             display: flex;
-            background-color: #d1d1d1;
+            background-color: var(--ui-bg-mid);
             overflow-x: auto;
-            border-bottom: 1px solid #aaa;
+            border-bottom: 1px solid var(--border-color);
             padding-left: 10px;
-            height: 38px;
+            height: 42px;
             align-items: center;
         }
 
         .tab-button {
             display: flex;
             align-items: center;
-            padding: 0 10px;
-            height: 38px;
-            background-color: #f1f1f1;
-            border: 1px solid #aaa;
-            border-bottom: none;
+            padding: 0 12px;
+            height: 42px;
+            background-color: var(--ui-bg-mid);
+            border-right: 1px solid var(--border-color);
             cursor: pointer;
             white-space: nowrap;
-            max-width: 180px;
+            max-width: 200px;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-right: -1px;
-            border-radius: 8px 8px 0 0;
             font-size: 0.9em;
-            position: relative;
-            top: 1px;
+            color: var(--text-color);
         }
         
         .tab-button.active {
-            background-color: #fff;
-            border-bottom-color: #fff;
+            background-color: var(--ui-bg-light);
+            border-bottom: 2px solid var(--orange-primary); /* Orange active indicator */
             font-weight: bold;
-            z-index: 10;
+        }
+        .tab-button:hover:not(.active) {
+            background-color: #eee;
         }
 
         .close-tab {
-            margin-left: 10px;
-            font-size: 16px;
-            color: #888;
+            margin-left: 15px;
+            font-size: 18px;
+            color: #aaa;
             cursor: pointer;
-            line-height: 1;
         }
-        .close-tab:hover { color: #333; }
+        .close-tab:hover { color: var(--text-color); }
         
         .add-tab-button {
-            /* Now uses standard button styles */
-            height: 30px; 
-            font-size: 18px;
+            height: 30px;
+            font-size: 24px;
             line-height: 1;
             padding: 0 10px;
             margin-left: 10px;
-            background-color: #d1d1d1;
-            color: #555;
-            border-radius: 4px;
+            background-color: transparent;
+            color: var(--text-color);
+            border: none;
         }
-        .add-tab-button:hover {
-            background-color: #b0b0b0;
-            color: #000;
-        }
+        .add-tab-button:hover { background-color: #eee; border-radius: 4px; }
 
 
         /* --- Address Bar Area --- */
@@ -100,36 +103,36 @@
             display: flex;
             align-items: center;
             padding: 8px 10px;
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
+            background-color: var(--ui-bg-light);
+            border-bottom: 1px solid var(--border-color);
         }
         #urlInput {
             flex-grow: 1;
-            padding: 6px 10px;
-            border: 1px solid #ccc;
-            border-radius: 16px;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
             margin: 0 10px;
-            font-size: 13px;
+            font-size: 14px;
+            background-color: var(--ui-bg-mid);
         }
-        button {
-            padding: 6px 12px;
-            background-color: #007bff;
+        .nav-btn {
+            padding: 8px 12px;
+            background-color: var(--orange-primary);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover { background-color: #0056b3; }
-        #fullscreenButton { background-color: #28a745; }
-        #fullscreenButton:hover { background-color: #218838; }
+        .nav-btn:hover { background-color: var(--orange-dark); }
+        #fullscreenButton { background-color: #1abc9c; } /* A complementary green/teal for contrast */
+        #fullscreenButton:hover { background-color: #16a085; }
 
 
-        /* --- iFrame Content Area & New Homepage Styling --- */
+        /* --- iFrame Content Area & Homepage Styling --- */
         #iframes-container {
             flex-grow: 1;
             position: relative;
-            min-height: 400px;
         }
         .iframe-tab-content {
             display: none;
@@ -143,34 +146,35 @@
             border: none;
         }
         
-        /* Homepage specific styling */
         .homepage-content {
             display: flex;
             flex-direction: column;
-        
-            /* Changed to align items visually better */
-            justify-content: flex-start;
-            padding-top: 15vh;
-        
+            justify-content: center;
             align-items: center;
             height: 100%;
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-            padding: 20px;
+            background: var(--ui-bg-mid);
+            text-align: center;
         }
         .homepage-content h1 {
-            margin-bottom: 20px;
-            color: #333;
-            font-size: 48px;
+            color: var(--orange-dark);
+            font-size: 64px;
+            margin-bottom: 40px;
         }
         .homepage-search-input {
             width: 80%;
-            max-width: 500px;
-            padding: 12px 20px;
-            border: 1px solid #ccc;
-            border-radius: 24px;
-            font-size: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 600px;
+            padding: 15px 30px;
+            border: 2px solid var(--orange-primary);
+            border-radius: 30px;
+            font-size: 18px;
+            box-shadow: 0 8px 16px rgba(var(--orange-primary), 0.2);
             text-align: center;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .homepage-search-input:focus {
+            border-color: var(--orange-dark);
+            box-shadow: 0 8px 20px rgba(var(--orange-dark), 0.3);
+            outline: none;
         }
 
 
@@ -181,7 +185,7 @@
             top: 0;
             left: 0;
             right: 0;
-            background-color: rgba(30, 30, 30, 0.9);
+            background-color: rgba(30, 30, 30, 0.95);
             padding: 5px;
             z-index: 2147483647;
             height: 40px;
@@ -197,7 +201,7 @@
              margin-right: 5px;
              border-radius: 3px;
         }
-        .fullscreen-tab-button.active { background-color: #007bff; }
+        .fullscreen-tab-button.active { background-color: var(--orange-primary); }
     </style>
 </head>
 <body>
@@ -213,10 +217,10 @@
 
         <!-- Address Bar / Controls -->
         <div class="address-bar-area">
-            <button onclick="navigateHistory(-1)" title="Back">Back</button>
-            <button onclick="navigateHistory(1)" title="Forward">Fwd</button>
+            <button onclick="navigateHistory(-1)" class="nav-btn" title="Back">←</button>
+            <button onclick="navigateHistory(1)" class="nav-btn" title="Forward">→</button>
             <input type="text" id="urlInput" placeholder="Enter URL (e.g., example.com) and press Enter">
-            <button onclick="loadIframe()">Go</button>
+            <button onclick="loadIframe()" class="nav-btn">Go</button>
             <button onclick="requestIframeFullscreen()" id="fullscreenButton">Fullscreen</button>
         </div>
 
@@ -243,7 +247,7 @@
         function createNewTab(url = null, tabName = null) {
             activeTabIdCounter++;
             const tabId = `tab-${activeTabIdCounter}`;
-            const isHomepage = url === null || url === 'about:blank' || url === '';
+            const isHomepage = url === null; // Null specifically means load the custom homepage
             const initialUrl = isHomepage ? 'about:blank' : url;
 
             // 1. Create the Tab Button element
@@ -266,29 +270,26 @@
             tabsContainer.insertBefore(tabButton, plusButtonInTabArea);
 
             // 2. Create the Iframe/Homepage Content Wrapper
-            const iframeWrapper = document.createElement('div');
-            iframeWrapper.id = tabId;
-            iframeWrapper.classList.add('iframe-tab-content');
+            const contentWrapper = document.createElement('div');
+            contentWrapper.id = tabId;
+            contentWrapper.classList.add('iframe-tab-content');
 
             if (isHomepage) {
-                // Load the custom homepage UI instead of an iframe
-                iframeWrapper.innerHTML = `
+                contentWrapper.innerHTML = `
                     <div class="homepage-content">
                         <h1>Browser Home</h1>
                         <input type="text" class="homepage-search-input" placeholder="Search or type URL" onkeypress="handleHomepageInput(event, '${tabId}')">
                     </div>
                 `;
             } else {
-                // Load an iframe for a specific URL
-                 iframeWrapper.innerHTML = `<iframe src="${initialUrl}" title="Embedded Website ${tabId}" allow="fullscreen"></iframe>`;
+                 contentWrapper.innerHTML = `<iframe src="${initialUrl}" title="Embedded Website ${tabId}" allow="fullscreen"></iframe>`;
             }
-            iframesContainer.appendChild(iframeWrapper);
+            iframesContainer.appendChild(contentWrapper);
 
-            tabs.push({ id: tabId, url: initialUrl, buttonElement: tabButton, contentElement: iframeWrapper, titleElement: titleSpan, isHomepage: isHomepage });
+            tabs.push({ id: tabId, url: initialUrl, buttonElement: tabButton, contentElement: contentWrapper, titleElement: titleSpan, isHomepage: isHomepage });
             switchTab(tabId);
         }
         
-        // Handles input within the visual homepage search bar
         function handleHomepageInput(event, tabId) {
             if (event.key === 'Enter') {
                 const url = event.target.value.trim();
@@ -299,6 +300,7 @@
                         activeTab.url = formattedUrl;
                         activeTab.isHomepage = false;
                         activeTab.titleElement.innerText = getHostName(formattedUrl);
+                        // Replace the div homepage content with the iframe
                         activeTab.contentElement.innerHTML = `<iframe src="${formattedUrl}" title="Embedded Website" allow="fullscreen"></iframe>`;
                         urlInput.value = formattedUrl; 
                     }
@@ -320,7 +322,6 @@
                     const newActiveIndex = index > 0 ? index - 1 : 0;
                     switchTab(tabs[newActiveIndex].id);
                 } else if (tabs.length === 0) {
-                    // Reopen a blank tab if all are closed, to avoid empty screen
                     createNewTab(null); 
                 }
             }
@@ -336,6 +337,7 @@
             if (selectedTab) {
                 selectedTab.contentElement.classList.add('active');
                 selectedTab.buttonElement.classList.add('active');
+                // Sync the main address bar with the active tab's URL/state
                 urlInput.value = selectedTab.isHomepage ? '' : selectedTab.url;
             }
             
@@ -351,11 +353,13 @@
                 const activeTab = tabs.find(tab => tab.contentElement.classList.contains('active'));
                 
                 if (activeTab && (activeTab.isHomepage || activeTab.url === 'about:blank')) {
+                    // Update the active tab rather than opening a new one
                     activeTab.url = formattedUrl;
                     activeTab.isHomepage = false;
                     activeTab.titleElement.innerText = getHostName(formattedUrl);
                     activeTab.contentElement.innerHTML = `<iframe src="${formattedUrl}" title="Embedded Website" allow="fullscreen"></iframe>`;
                 } else {
+                    // Open a new tab
                     createNewTab(formattedUrl, getHostName(formattedUrl));
                 }
             }
@@ -374,15 +378,13 @@
         
         function navigateHistory(delta) {
             const activeTab = tabs.find(tab => tab.contentElement.classList.contains('active'));
-            // History navigation only works on actual iframes, not the homepage div
             if (activeTab && !activeTab.isHomepage) {
-                // This command sends the browser history command to the iframe's internal history
                 activeTab.contentElement.querySelector('iframe').contentWindow.history.go(delta);
             }
         }
 
 
-        // --- Fullscreen Logic ---
+        // --- Fullscreen Logic (No Prompts/Alerts) ---
         function requestIframeFullscreen() {
             const browserContainer = document.querySelector('.browser-container');
             if (browserContainer.requestFullscreen) {
@@ -420,20 +422,17 @@
                 fullscreenControlsBar.appendChild(fsTabButton);
             });
             
-            // New Tab button in fullscreen mode
+            // New Tab button in fullscreen mode opens homepage directly
             const newTabBtn = document.createElement('button');
             newTabBtn.innerText = "+";
             newTabBtn.classList.add('fullscreen-tab-button');
-            newTabBtn.onclick = () => createNewTab(null); // Opens a standard homepage tab
+            newTabBtn.onclick = () => createNewTab(null);
             fullscreenControlsBar.appendChild(newTabBtn);
         }
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', (event) => {
-            // Initialize with one homepage tab
-            createNewTab(null);
-
-            // Add Enter key listener for the main address bar
+            createNewTab(null); // Initialize with homepage
             document.getElementById('urlInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     loadIframe();
