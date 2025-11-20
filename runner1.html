@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chrome-Style Tabbed Browser (Improved)</title>
+    <title>Chrome-Style Tabbed Browser (Refined)</title>
     <style>
         /* Base Reset */
         * {
@@ -77,16 +77,23 @@
             line-height: 1;
         }
         .close-tab:hover { color: #333; }
+        
         .add-tab-button {
-            background-color: #e1e1e1;
-            border: none;
-            padding: 0 10px;
-            height: 24px;
-            margin-left: 10px;
-            border-radius: 4px;
+            /* Now uses standard button styles */
+            height: 30px; 
             font-size: 18px;
             line-height: 1;
+            padding: 0 10px;
+            margin-left: 10px;
+            background-color: #d1d1d1;
+            color: #555;
+            border-radius: 4px;
         }
+        .add-tab-button:hover {
+            background-color: #b0b0b0;
+            color: #000;
+        }
+
 
         /* --- Address Bar Area --- */
         .address-bar-area {
@@ -140,7 +147,11 @@
         .homepage-content {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+        
+            /* Changed to align items visually better */
+            justify-content: flex-start;
+            padding-top: 15vh;
+        
             align-items: center;
             height: 100%;
             background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
@@ -149,6 +160,7 @@
         .homepage-content h1 {
             margin-bottom: 20px;
             color: #333;
+            font-size: 48px;
         }
         .homepage-search-input {
             width: 80%;
@@ -196,7 +208,7 @@
     <div class="browser-container">
         <!-- Tab Bar -->
         <div id="tabs-container">
-            <button class="add-tab-button" onclick="handlePlusButtonInFullscreen()" title="Open new tab">+</button>
+            <button class="add-tab-button" onclick="createNewTab(null)" title="Open new tab">+</button>
         </div>
 
         <!-- Address Bar / Controls -->
@@ -235,7 +247,7 @@
             const initialUrl = isHomepage ? 'about:blank' : url;
 
             // 1. Create the Tab Button element
-            const tabButton = document.createElement('div');
+            const tabButton = document.createElement('div'); 
             tabButton.classList.add('tab-button');
             tabButton.onclick = () => switchTab(tabId);
             
@@ -247,7 +259,7 @@
             closeBtn.innerHTML = '&times;';
             closeBtn.classList.add('close-tab');
             closeBtn.onclick = (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); 
                 closeTab(tabId);
             };
             tabButton.appendChild(closeBtn);
@@ -262,7 +274,7 @@
                 // Load the custom homepage UI instead of an iframe
                 iframeWrapper.innerHTML = `
                     <div class="homepage-content">
-                        <h1>Local Browser Home</h1>
+                        <h1>Browser Home</h1>
                         <input type="text" class="homepage-search-input" placeholder="Search or type URL" onkeypress="handleHomepageInput(event, '${tabId}')">
                     </div>
                 `;
@@ -283,13 +295,11 @@
                 if (url) {
                     const activeTab = tabs.find(tab => tab.id === tabId);
                     if (activeTab) {
-                        // Replace the homepage content with an actual iframe and update tab data
                         const formattedUrl = formatUrl(url);
                         activeTab.url = formattedUrl;
                         activeTab.isHomepage = false;
                         activeTab.titleElement.innerText = getHostName(formattedUrl);
-                        activeTab.contentElement.innerHTML = `<iframe src="${formattedUrl}" title="Embedded Website ${tabId}" allow="fullscreen"></iframe>`;
-                        // Also update the main address bar input
+                        activeTab.contentElement.innerHTML = `<iframe src="${formattedUrl}" title="Embedded Website" allow="fullscreen"></iframe>`;
                         urlInput.value = formattedUrl; 
                     }
                 }
@@ -310,7 +320,7 @@
                     const newActiveIndex = index > 0 ? index - 1 : 0;
                     switchTab(tabs[newActiveIndex].id);
                 } else if (tabs.length === 0) {
-                    // Optional: automatically reopen a blank tab if all are closed
+                    // Reopen a blank tab if all are closed, to avoid empty screen
                     createNewTab(null); 
                 }
             }
@@ -326,7 +336,6 @@
             if (selectedTab) {
                 selectedTab.contentElement.classList.add('active');
                 selectedTab.buttonElement.classList.add('active');
-                // Sync the main address bar with the active tab's URL
                 urlInput.value = selectedTab.isHomepage ? '' : selectedTab.url;
             }
             
@@ -335,15 +344,13 @@
             }
         }
 
-        // Function linked to the "Go" button in the main address bar
         function loadIframe() {
             const url = urlInput.value.trim();
             if (url) {
                 const formattedUrl = formatUrl(url);
                 const activeTab = tabs.find(tab => tab.contentElement.classList.contains('active'));
                 
-                // If active tab is homepage, replace it; otherwise, make a new tab.
-                if (activeTab && activeTab.isHomepage) {
+                if (activeTab && (activeTab.isHomepage || activeTab.url === 'about:blank')) {
                     activeTab.url = formattedUrl;
                     activeTab.isHomepage = false;
                     activeTab.titleElement.innerText = getHostName(formattedUrl);
@@ -367,6 +374,7 @@
         
         function navigateHistory(delta) {
             const activeTab = tabs.find(tab => tab.contentElement.classList.contains('active'));
+            // History navigation only works on actual iframes, not the homepage div
             if (activeTab && !activeTab.isHomepage) {
                 // This command sends the browser history command to the iframe's internal history
                 activeTab.contentElement.querySelector('iframe').contentWindow.history.go(delta);
@@ -411,21 +419,13 @@
                 fsTabButton.onclick = () => switchTab(tab.id);
                 fullscreenControlsBar.appendChild(fsTabButton);
             });
+            
+            // New Tab button in fullscreen mode
             const newTabBtn = document.createElement('button');
             newTabBtn.innerText = "+";
             newTabBtn.classList.add('fullscreen-tab-button');
-            newTabBtn.onclick = handlePlusButtonInFullscreen;
+            newTabBtn.onclick = () => createNewTab(null); // Opens a standard homepage tab
             fullscreenControlsBar.appendChild(newTabBtn);
-        }
-        
-        function handlePlusButtonInFullscreen() {
-            const newUrl = prompt("Enter a URL or press OK for homepage:");
-            // If the user cancels the prompt, newUrl is null. If they press OK with no text, it's "".
-            // Only proceed if they provided something or want a homepage.
-            if (newUrl !== null) {
-                 // We don't exit fullscreen here; the new tab is created in the background/switched to.
-                createNewTab(newUrl.trim() === "" ? null : formatUrl(newUrl.trim()));
-            }
         }
 
         // --- Initialization ---
