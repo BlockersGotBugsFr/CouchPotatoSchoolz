@@ -3,99 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Multi-Tab iFrame Browser</title>
+    <title>Chrome-Style Tabbed Browser</title>
     <style>
-        /* General Reset & Base Styles */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f4;
+        /* Base Reset */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .container {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 1200px;
-            margin: 20px auto;
-            background-color: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            width: 100%;
         }
 
-        /* Header/Controls Area (Browser Top Bar Look) */
-        .browser-header {
-            padding: 10px 20px;
-            background-color: #e9e9e9;
-            border-bottom: 1px solid #ccc;
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #e3e3e3;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .browser-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            background-color: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px;
+        }
+
+        /* --- Tab Bar Styling (The main UI change) --- */
+        #tabs-container {
+            display: flex;
+            background-color: #d1d1d1;
+            overflow-x: auto;
+            border-bottom: 1px solid #aaa;
+            padding-left: 10px;
+            height: 38px;
+            align-items: center;
+        }
+
+        .tab-button {
             display: flex;
             align-items: center;
-            gap: 10px;
+            padding: 0 10px;
+            height: 38px;
+            background-color: #f1f1f1;
+            border: 1px solid #aaa;
+            border-bottom: none;
+            cursor: pointer;
+            white-space: nowrap;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-right: -1px; /* Overlap borders slightly */
+            border-radius: 8px 8px 0 0;
+            font-size: 0.9em;
+            position: relative;
+            top: 1px; /* Aligns visually with the bottom line */
         }
-        input[type="text"] {
+        
+        .tab-button.active {
+            background-color: #fff;
+            border-bottom-color: #fff;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        /* Close button inside tab */
+        .close-tab {
+            margin-left: 10px;
+            font-size: 16px;
+            color: #888;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .close-tab:hover {
+            color: #333;
+        }
+
+        .add-tab-button {
+            background-color: #e1e1e1;
+            border: none;
+            padding: 0 10px;
+            height: 24px;
+            margin-left: 10px;
+            border-radius: 4px;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* --- Address Bar Area --- */
+        .address-bar-area {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        #urlInput {
             flex-grow: 1;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: 1px solid #ccc;
-            border-radius: 20px; /* Pill shape for address bar look */
-            box-sizing: border-box;
-            font-size: 14px;
+            border-radius: 16px; /* Pill shape */
+            margin: 0 10px;
+            font-size: 13px;
         }
-        button, .nav-button {
-            padding: 8px 15px;
+        button {
+            padding: 6px 12px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            transition: background-color 0.2s;
         }
-        button:hover, .nav-button:hover {
-            background-color: #0056b3;
-        }
+        button:hover { background-color: #0056b3; }
         #fullscreenButton { background-color: #28a745; }
         #fullscreenButton:hover { background-color: #218838; }
 
-        /* Tab Bar Styles */
-        #tabs-container {
-            display: flex;
-            overflow-x: auto;
-            background-color: #f1f1f1;
-            border-bottom: 1px solid #ccc;
-        }
-        .tab-button {
-            padding: 8px 15px;
-            background-color: #f1f1f1;
-            color: #333;
-            border: none;
-            border-right: 1px solid #ccc;
-            cursor: pointer;
-            white-space: nowrap;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .tab-button.active {
-            background-color: #fff;
-            border-bottom: 1px solid #fff;
-            font-weight: bold;
-        }
-        .tab-button:hover:not(.active) { background-color: #ddd; }
-        .add-tab-button { background-color: #e9e9e9; }
 
-
-        /* iFrame Content Area */
+        /* --- iFrame Content Area --- */
         #iframes-container {
-            position: relative;
             flex-grow: 1;
-            height: 600px; /* Default height when not flexed */
+            position: relative;
+            min-height: 400px;
         }
         .iframe-tab-content {
             display: none;
@@ -107,35 +139,21 @@
             width: 100%;
             height: 100%;
             border: none;
-            background-color: #f9f9f9;
         }
 
-        /* Footer Styles (Original content, just restyled slightly) */
-        .footer-info {
-            padding: 15px 20px;
-            background-color: #fff;
-            border-top: 1px solid #f4f4f4;
-            font-size: 0.9em;
-        }
-        .b { color: red; font-size: 1.2em; }
-        #copyLinkButton, #copyAnimeLinkButton {
-             background-color: #ff5722;
-             margin-top: 10px;
-        }
-
-        /* Fullscreen Overlay Controls (This is the key for full-screen tab switching) */
+        /* --- Fullscreen Overlay Controls --- */
         #fullscreen-controls-bar {
-            display: none; /* Hidden until fullscreen event detected */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            background-color: rgba(30, 30, 30, 0.9); /* Dark overlay bar */
+            background-color: rgba(30, 30, 30, 0.9);
             padding: 5px;
-            z-index: 2147483647; /* Max z-index to be above all content */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            height: 40px; /* Fixed height for the bar */
-            overflow: hidden;
+            z-index: 2147483647;
+            height: 40px;
+            overflow-x: auto;
+            white-space: nowrap;
         }
         .fullscreen-tab-button {
              padding: 5px 10px;
@@ -143,46 +161,41 @@
              color: white;
              border: none;
              cursor: pointer;
-             margin-right: 3px;
+             margin-right: 5px;
              border-radius: 3px;
         }
         .fullscreen-tab-button.active {
             background-color: #007bff;
         }
-
     </style>
 </head>
 <body>
 
-    <!-- This bar appears ONLY when in fullscreen mode -->
-    <div id="fullscreen-controls-bar">
-        <!-- Buttons are injected here dynamically via JS during fullscreen mode -->
-    </div>
+    <!-- Fullscreen Controls Bar (Invisible normally) -->
+    <div id="fullscreen-controls-bar"></div>
 
-    <div class="container">
-        <div class="browser-header">
-            <a href="index.html" class="nav-button" title="Go to Index Page">Index</a>
-            <input type="text" id="urlInput" placeholder="Enter full URL and press Enter or Load">
-            <button onclick="loadIframe()">Load</button>
-            <button onclick="requestIframeFullscreen()" id="fullscreenButton" title="View active tab fullscreen (F11 might also work)">Fullscreen</button>
-        </div>
-
+    <div class="browser-container">
+        <!-- Tab Bar -->
         <div id="tabs-container">
-            <!-- Tab buttons are generated here by JavaScript -->
+            <!-- Tabs added by JS -->
+            <button class="add-tab-button" onclick="handlePlusButtonInFullscreen()">+</button>
         </div>
 
+        <!-- Address Bar / Controls -->
+        <div class="address-bar-area">
+            <button onclick="window.history.back()">Back</button>
+            <button onclick="window.history.forward()">Fwd</button>
+            <input type="text" id="urlInput" placeholder="Enter URL (e.g., example.com) and press Enter">
+            <button onclick="loadIframe()">Go</button>
+            <button onclick="requestIframeFullscreen()" id="fullscreenButton">Fullscreen</button>
+        </div>
+
+        <!-- iFrame Content Area -->
         <div id="iframes-container">
-            <!-- iFrames and their wrappers are generated here by JavaScript -->
+            <!-- iFrames added by JS -->
         </div>
 
-        <div class="footer-info">
-            <!-- Original Footer Content -->
-            <div>
-                <br>
-            </div>
-        </div>
     </div>
-
 
     <script>
         // --- Global State and References ---
@@ -192,6 +205,7 @@
         const iframesContainer = document.getElementById('iframes-container');
         const urlInput = document.getElementById('urlInput');
         const fullscreenControlsBar = document.getElementById('fullscreen-controls-bar');
+        const plusButtonInTabArea = document.querySelector('.add-tab-button');
 
 
         // --- Tab Management Functions ---
@@ -200,131 +214,166 @@
             activeTabIdCounter++;
             const tabId = `tab-${activeTabIdCounter}`;
 
-            // 1. Create the Tab Button
-            const tabButton = document.createElement('button');
-            tabButton.innerText = tabName || `Tab ${activeTabIdCounter}`;
+            // 1. Create the Tab Button element
+            const tabButton = document.createElement('div'); // Using div for complex layout
             tabButton.classList.add('tab-button');
             tabButton.onclick = () => switchTab(tabId);
-            tabsContainer.appendChild(tabButton);
+            
+            // Tab Title Span
+            const titleSpan = document.createElement('span');
+            titleSpan.innerText = tabName || `New Tab`;
+            tabButton.appendChild(titleSpan);
+
+            // Close button (X)
+            const closeBtn = document.createElement('span');
+            closeBtn.innerHTML = '&times;';
+            closeBtn.classList.add('close-tab');
+            closeBtn.onclick = (e) => {
+                e.stopPropagation(); // Stop switchTab from running when clicking close
+                closeTab(tabId);
+            };
+            tabButton.appendChild(closeBtn);
+
+            // Insert new tab button before the existing '+' button
+            tabsContainer.insertBefore(tabButton, plusButtonInTabArea);
 
             // 2. Create the Iframe Wrapper/Element
             const iframeWrapper = document.createElement('div');
             iframeWrapper.id = tabId;
             iframeWrapper.classList.add('iframe-tab-content');
-            // 'allow="fullscreen"' is necessary for the *content* inside to use its *own* fullscreen API (like YouTube video player)
-            // Our custom fullscreen uses the parent div's API.
             iframeWrapper.innerHTML = `<iframe src="${url}" title="Embedded Website ${tabId}" allow="fullscreen"></iframe>`;
             iframesContainer.appendChild(iframeWrapper);
 
             // Add to tracking array
-            tabs.push({ id: tabId, url: url, button: tabButton, element: iframeWrapper });
+            tabs.push({ id: tabId, url: url, buttonElement: tabButton, iframeElement: iframeWrapper, titleElement: titleSpan });
 
             switchTab(tabId);
         }
 
+        function closeTab(tabId) {
+            const index = tabs.findIndex(tab => tab.id === tabId);
+            if (index > -1) {
+                const tab = tabs[index];
+                tab.buttonElement.remove();
+                tab.iframeElement.remove();
+                tabs.splice(index, 1);
+
+                // If the closed tab was active, switch to the next available one
+                if (tab.buttonElement.classList.contains('active')) {
+                    if (tabs.length > 0) {
+                        // Switch to the previous tab if available, otherwise the first one
+                        const newActiveIndex = index > 0 ? index - 1 : 0;
+                        switchTab(tabs[newActiveIndex].id);
+                    } else {
+                        // No tabs left, clear input and potentially show blank state
+                        urlInput.value = '';
+                    }
+                }
+            }
+        }
+
         function switchTab(tabId) {
-            // Deactivate all
             tabs.forEach(tab => {
-                tab.element.classList.remove('active');
-                tab.button.classList.remove('active');
+                tab.iframeElement.classList.remove('active');
+                tab.buttonElement.classList.remove('active');
             });
 
-            // Activate the selected one
             const selectedTab = tabs.find(tab => tab.id === tabId);
             if (selectedTab) {
-                selectedTab.element.classList.add('active');
-                selectedTab.button.classList.add('active');
-                // Update URL input field in header when switching tabs
+                selectedTab.iframeElement.classList.add('active');
+                selectedTab.buttonElement.classList.add('active');
                 urlInput.value = selectedTab.url === 'about:blank' ? '' : selectedTab.url;
             }
-            // If we are currently in fullscreen mode, we need to rebuild the controls bar to reflect the active tab
+            
+            // If in fullscreen, refresh the controls overlay
             if (document.fullscreenElement || document.webkitFullscreenElement) {
                 updateFullscreenControls();
             }
         }
 
-        // Function linked to the "Load" button
         function loadIframe() {
             let url = urlInput.value.trim();
             if (url) {
                 if (!url.startsWith('http://') && !url.startsWith('https://')) {
                     url = 'https://' + url;
                 }
-                createNewTab(url, getHostName(url));
-                // URL input is cleared inside switchTab function which is called by createNewTab
+                
+                // Instead of always creating a *new* tab, update the current one if it's blank
+                const activeTab = tabs.find(tab => tab.iframeElement.classList.contains('active'));
+                if (activeTab && activeTab.url === 'about:blank') {
+                    activeTab.url = url;
+                    activeTab.iframeElement.querySelector('iframe').src = url;
+                    activeTab.titleElement.innerText = getHostName(url);
+                    // No need to call switchTab again
+                } else {
+                    createNewTab(url, getHostName(url));
+                }
+                urlInput.value = url; // Keep the URL in the bar
             } else {
                 alert("Please enter a URL.");
             }
         }
 
-        // Helper function to extract a cleaner name for the tab button
         function getHostName(url) {
             try {
                 return new URL(url).hostname.replace('www.', '');
             } catch (e) {
-                return "New Tab";
+                return "Invalid URL";
             }
         }
+
 
         // --- Fullscreen Logic ---
 
         function requestIframeFullscreen() {
-            // Request fullscreen on the main container to hide all other elements *except* the content and our overlay
-            if (document.body.requestFullscreen) {
-                document.body.requestFullscreen();
-            } else if (document.body.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-                document.body.webkitRequestFullscreen();
-            } else if (document.body.msRequestFullscreen) { /* IE/Edge */
-                document.body.msRequestFullscreen();
-            } else {
-                alert("Fullscreen API is not supported by this browser.");
+            // We request fullscreen on the browser-container to keep UI elements contained when possible
+            const browserContainer = document.querySelector('.browser-container');
+            if (browserContainer.requestFullscreen) {
+                browserContainer.requestFullscreen();
+            } else if (browserContainer.webkitRequestFullscreen) {
+                browserContainer.webkitRequestFullscreen();
+            } else if (browserContainer.msRequestFullscreen) {
+                browserContainer.msRequestFullscreen();
             }
         }
 
-        // Listen for browser fullscreen events
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
         function handleFullscreenChange() {
-            // Check if *any* element owned by our document is currently fullscreen
             if (document.fullscreenElement || document.webkitFullscreenElement) {
-                // We are in fullscreen mode: show and build the controls bar
                 fullscreenControlsBar.style.display = 'block';
                 updateFullscreenControls();
             } else {
-                // We are exiting fullscreen mode: hide the controls bar
                 fullscreenControlsBar.style.display = 'none';
-                fullscreenControlsBar.innerHTML = ''; // Clear buttons
+                fullscreenControlsBar.innerHTML = '';
             }
         }
 
-        // Function to dynamically add tab buttons to the top bar when in fullscreen
         function updateFullscreenControls() {
-            fullscreenControlsBar.innerHTML = ''; // Clear existing controls
+            fullscreenControlsBar.innerHTML = '';
             tabs.forEach(tab => {
                 const fsTabButton = document.createElement('button');
-                fsTabButton.innerText = tab.button.innerText; // Use the same name as the tab button
+                fsTabButton.innerText = tab.titleElement.innerText;
                 fsTabButton.classList.add('fullscreen-tab-button');
-                if (tab.element.classList.contains('active')) {
+                if (tab.iframeElement.classList.contains('active')) {
                     fsTabButton.classList.add('active');
                 }
                 fsTabButton.onclick = () => switchTab(tab.id);
                 fullscreenControlsBar.appendChild(fsTabButton);
             });
-
-            // Add the '+' button/input in the fullscreen bar as requested
+            // Add a simple '+' button to the fullscreen bar
             const newTabBtn = document.createElement('button');
-            newTabBtn.innerText = "+ New Tab";
+            newTabBtn.innerText = "+";
             newTabBtn.classList.add('fullscreen-tab-button');
             newTabBtn.onclick = handlePlusButtonInFullscreen;
             fullscreenControlsBar.appendChild(newTabBtn);
         }
-
-        // Function called when the PLUS button in the overlay is clicked
+        
+        // Used by both the tab area plus button and the fullscreen plus button
         function handlePlusButtonInFullscreen() {
-            const newUrl = prompt("Enter a new URL to open in a new tab:");
+            const newUrl = prompt("Enter a new URL to open:");
             if (newUrl) {
-                // We remain in fullscreen mode, but create a new tab and switch to it immediately
                 let formattedUrl = newUrl.trim();
                 if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
                     formattedUrl = 'https://' + formattedUrl;
@@ -333,22 +382,10 @@
             }
         }
 
-        // --- Original Utility Functions ---
-
-        function copyAiLink(spanId) {
-            const linkText = document.getElementById(spanId).textContent;
-            navigator.clipboard.writeText(linkText).then(() => {
-                alert("Link copied to clipboard: " + linkText);
-            }).catch(err => {
-                console.error('Could not copy text: ', err);
-                alert("Failed to copy link. Please copy manually: " + linkText);
-            });
-        }
-
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', (event) => {
-            // Initialize the first blank tab
-            createNewTab('about:blank', 'Blank Tab');
+            // Initialize with one blank tab on load
+            createNewTab('about:blank', 'New Tab');
 
             // Add Enter key listener for the URL input field
             document.getElementById('urlInput').addEventListener('keypress', function(e) {
